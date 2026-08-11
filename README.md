@@ -167,11 +167,11 @@ The **vendored upstream code** under `environment/repo/` (nanoGPT, torchtitan, v
 
 <div align="center">
 
-### Φ-Bench · Phi-Bench · ΦBench — LLM Infrastructure Engineering Benchmark
+### Φ-Bench · FAI-Bench — Frontier AI Infrastructure Benchmark
 
 </div>
 
-**About the name.** *Φ-Bench* (pronounced and also written **Phi-Bench** or **ΦBench**) is a benchmark that asks whether large language models and autonomous coding agents can engineer the ML systems infrastructure that powers LLMs themselves. Website & leaderboard: **[llminfrabench.com](http://llminfrabench.com/)**.
+**About the name.** *Φ-Bench* (pronounced and also written **FAI-Bench**) is a benchmark that asks whether large language models and autonomous coding agents can engineer the ML systems infrastructure that powers LLMs themselves. Website & leaderboard: **[llminfrabench.com](http://llminfrabench.com/)**.
 
 **Topics:** `llm` · `benchmark` · `llm-agents` · `coding-agents` · `ml-systems` · `llm-infrastructure` · `gpu` · `cuda-kernels` · `inference` · `training` · `quantization` · `agent-evaluation` · `leaderboard`
 
