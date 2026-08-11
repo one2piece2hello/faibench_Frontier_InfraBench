@@ -2,7 +2,7 @@
 
 <h1>Φ-Bench: Can Large Language Models Engineer the Infrastructure That Powers Them?</h1>
 
-*A reproducible benchmark for frontier LLMs & autonomous coding agents on **ML-systems / LLM-infrastructure engineering** — also written **Phi-Bench** / **ΦBench**.*
+*A reproducible benchmark for frontier LLMs & autonomous coding agents on **ML-systems / LLM-infrastructure engineering** — also written **FAI-Bench** / **ΦBench**.*
 
 **85 open-source LLM-infrastructure engineering tasks** — build a public Docker image, solve the task offline, and score against a grader shipped with the package.
 
