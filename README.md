@@ -180,8 +180,8 @@ The **vendored upstream code** under `environment/repo/` (nanoGPT, torchtitan, v
 **Cite as:**
 
 ```bibtex
-@misc{phibench2026,
-  title  = {Phi-Bench: Can Large Language Models Engineer the Infrastructure That Powers Them?},
+@misc{faibench2026,
+  title  = {$\Phi$-Bench: Can Large Language Models Engineer the Infrastructure That Powers Them?},
   author = {Φ-Bench contributors},
   year   = {2026},
   url    = {http://llminfrabench.com/}
