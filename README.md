@@ -1,27 +1,3 @@
----
-pretty_name: "Φ-Bench: Frontier AI Infrastructure Benchmark"
-license: apache-2.0
-language:
-  - en
-  - zh
-size_categories:
-  - n<1K
-tags:
-  - benchmark
-  - llm-infra
-  - llm-systems
-  - infrabench
-  - kernelbench
-  - docker
-  - cuda
-  - gpu
-configs:
-  - config_name: default
-    data_files:
-      - split: test
-        path: task_catalog.jsonl
----
-
 <div align="center">
 
 <h1>Φ-Bench: Can Large Language Models Engineer the Infrastructure That Powers Them?</h1>
