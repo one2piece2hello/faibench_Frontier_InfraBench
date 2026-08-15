@@ -6,11 +6,11 @@
 
 **85 open-source LLM-infrastructure engineering tasks** — build a public Docker image, solve the task offline, and score against a grader shipped with the package.
 
-### 🔗 [llminfrabench.com](http://llminfrabench.com/)
+### 🔗 [faibench.org](http://faibenchbench.org/)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 &nbsp;![tasks](https://img.shields.io/badge/tasks-85-brightgreen.svg)
-&nbsp;[![website](https://img.shields.io/badge/website-llminfrabench.com-8A2BE2.svg)](http://llminfrabench.com/)
+&nbsp;[![website](https://img.shields.io/badge/website-llminfrabench.com-8A2BE2.svg)](http://faibench.org/)
 
 ###### 🌐&nbsp; **English** &nbsp;·&nbsp; [简体中文](README.zh-CN.md)
 
