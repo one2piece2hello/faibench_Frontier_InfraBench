@@ -22,7 +22,7 @@
 
 ## Contents
 
-- [Abstract](#abstract)
+- [Can LLMs Engineer the Infrastructure That Powers Them?](#can-llms-engineer-the-infrastructure-that-powers-them)
 - [Benchmark Overview](#benchmark-overview)
 - [Directory shape](#directory-shape)
 - [Running a Task](#running-a-task)
@@ -32,15 +32,13 @@
 - [Package Verification](#package-verification)
 - [License](#license)
 
-## Abstract
-
-Can LLMs Engineer the Infrastructure That Powers Them?
+## Can LLMs Engineer the Infrastructure That Powers Them?
 
 **Meet Φ-Bench—the most comprehensive and realistic benchmark for LLM infrastructure engineering.**
 
 ✅ **Broadest coverage.** ✅ **Real-world engineering.** ✅ **Frontier-level difficulty.**
 
-To build Φ-Bench, we sourced more than **10,000 candidate tasks** from issues, pull requests, and engineering discussions across major open-source repositories, as well as systems papers published at **top-tier conferences over the past four years**. Agent-assisted triage retained over **4,000 high-value candidates**, followed by rigorous filtering, expert review, and careful refinement—ultimately producing **85 real-world, highly challenging tasks**.
+To build Φ-Bench, we sourced **10,000+ candidate tasks** from issues, pull requests, and engineering discussions across major open-source repositories, as well as systems papers published at **top-tier conferences over the past four years**. Agent-assisted triage retained over **4,000 high-value candidates**, followed by rigorous filtering, expert review, and careful refinement—ultimately producing **85 real-world, highly challenging tasks**.
 
 Going far beyond operator-level KernelBench-style evaluations, Φ-Bench measures capabilities across three increasingly demanding settings:
 
