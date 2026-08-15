@@ -34,7 +34,7 @@
 
 ## Can LLMs Engineer the Infrastructure That Powers Them?
 
-**Meet Φ-Bench—the most comprehensive and realistic benchmark for LLM infrastructure engineering.**
+**Can LLMs Engineer the Infrastructure That Powers Them? To answer this question, we introduce Φ-Bench—the most comprehensive and realistic benchmark for LLM infrastructure engineering.**
 
 ✅ **Broadest coverage.** ✅ **Real-world engineering.** ✅ **Frontier-level difficulty.**
 
