@@ -34,11 +34,7 @@
 
 ## Abstract
 
-Large language models (LLMs) have demonstrated remarkable capabilities in reasoning and code generation, raising the prospect that they could help develop and optimize the very infrastructure that powers them. However, existing benchmarks mainly focus on isolated GPU kernels, predefined operators, or pre-specified optimization targets. They therefore do not fully evaluate open-ended, long-horizon LLM infrastructure engineering, where an LLM must navigate a real codebase, identify bottlenecks, and iteratively implement, profile, debug, and refine a solution. Prior benchmarks such as KernelBench, TritonBench, and FlashInfer-Bench have established valuable testbeds for GPU kernel generation and optimization, while more recent efforts such as ISO-Bench and CUDAHercules have explored broader repository-level optimization settings. Nevertheless, these evaluation settings are generally centered on predefined functions, operators, or optimization objectives, leaving open-ended, long-horizon infrastructure engineering underexplored.
-
-To address this gap, we present **Φ-Bench (Frontier AI Infrastructure Benchmark)**, a benchmark for systematically evaluating LLMs on engineering the LLM infrastructure stack. Derived from problems studied in frontier systems research and grounded in real-world open-source repositories, Φ-Bench provides broad coverage of AI infrastructure for LLM training and inference. Its 85 tasks span three progressively broader settings: **Kernel Function Completion (KFC)**, **Long-Horizon Implementation (LHI)**, and **End-to-End Optimization (E2EO)**. Together they range from localized CUDA/GPU kernel implementation and optimization to repository-scale development and open-ended system optimization.
-
-Experiments on frontier LLMs reveal their current capabilities and limitations in engineering complex LLM infrastructure, offering insights into the challenges that remain on the path toward autonomous optimization of future AI infrastructure.
+Can LLMs Engineer the Infrastructure That Powers Them?
 
 ## Benchmark Overview
 
