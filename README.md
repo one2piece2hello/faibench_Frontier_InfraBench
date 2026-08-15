@@ -36,6 +36,20 @@
 
 Can LLMs Engineer the Infrastructure That Powers Them?
 
+**Meet Φ-Bench—the most comprehensive and realistic benchmark for LLM infrastructure engineering.**
+
+✅ **Broadest coverage.** ✅ **Real-world engineering.** ✅ **Frontier-level difficulty.**
+
+To build Φ-Bench, we sourced more than **10,000 candidate tasks** from issues, pull requests, and engineering discussions across major open-source repositories, as well as systems papers published at **top-tier conferences over the past four years**. Agent-assisted triage retained over **4,000 high-value candidates**, followed by rigorous filtering, expert review, and careful refinement—ultimately producing **85 real-world, highly challenging tasks**.
+
+Going far beyond operator-level KernelBench-style evaluations, Φ-Bench measures capabilities across three increasingly demanding settings:
+
+- **Kernel Function Completion**
+- **Long-Horizon Implementation**
+- **End-to-End Optimization**
+
+From implementing individual operators to navigating entire repositories and optimizing complex systems, **Φ-Bench evaluates whether frontier LLMs can engineer the infrastructure that powers them.**
+
 ## Benchmark Overview
 
 Every task ships a **self-contained public Dockerfile** — `git clone` + `docker build` reproduces the environment, and the scoring surface is released with the package. All tasks are `allow_internet = false`: **both solving and scoring run offline**, so every dependency (including model weights and datasets) is baked into the image at `docker build` time.
