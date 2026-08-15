@@ -6,11 +6,13 @@
 
 **85 道开源 LLM 基础设施工程任务** —— 构建公开 Docker 镜像，离线解题，并使用随评测包发布的评分器评分。
 
-### 🔗 [llminfrabench.com](http://llminfrabench.com/)
+### 🔗 [faibench.org](https://faibench.org/)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 &nbsp;![tasks](https://img.shields.io/badge/tasks-85-brightgreen.svg)
-&nbsp;[![website](https://img.shields.io/badge/website-llminfrabench.com-8A2BE2.svg)](http://llminfrabench.com/)
+&nbsp;[![Website](https://img.shields.io/badge/Website-faibench.org-2563EB?logo=googlechrome&logoColor=white)](https://faibench.org/)
+&nbsp;[![Hugging Face Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-FFD21E)](https://huggingface.co/datasets/faibench-Frontier-Infra-Bench/faibench_Frontier_Infra_Bench)
+&nbsp;![arXiv](https://img.shields.io/badge/arXiv-coming%20soon-B31B1B?logo=arxiv&logoColor=white)
 
 ###### 🌐&nbsp; [English](README.md) &nbsp;·&nbsp; **简体中文**
 
@@ -189,6 +191,6 @@ Megatron-LM / ColossalAI / flash-linear-attention 等)以及 build 期从公开�
   title  = {$\Phi$-Bench: Can Large Language Models Engineer the Infrastructure That Powers Them?},
   author = {Φ-Bench contributors},
   year   = {2026},
-  url    = {http://llminfrabench.com/}
+  url    = {https://faibench.org/}
 }
 ```

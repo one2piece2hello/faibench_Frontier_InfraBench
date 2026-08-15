@@ -6,11 +6,13 @@
 
 **85 open-source LLM-infrastructure engineering tasks** — build a public Docker image, solve the task offline, and score against a grader shipped with the package.
 
-### 🔗 [faibench.org](http://faibenchbench.org/)
+### 🔗 [faibench.org](https://faibench.org/)
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 &nbsp;![tasks](https://img.shields.io/badge/tasks-85-brightgreen.svg)
-&nbsp;[![website](https://img.shields.io/badge/website-llminfrabench.com-8A2BE2.svg)](http://faibench.org/)
+&nbsp;[![Website](https://img.shields.io/badge/Website-faibench.org-2563EB?logo=googlechrome&logoColor=white)](https://faibench.org/)
+&nbsp;[![Hugging Face Dataset](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-FFD21E)](https://huggingface.co/datasets/faibench-Frontier-Infra-Bench/faibench_Frontier_Infra_Bench)
+&nbsp;![arXiv](https://img.shields.io/badge/arXiv-coming%20soon-B31B1B?logo=arxiv&logoColor=white)
 
 ###### 🌐&nbsp; **English** &nbsp;·&nbsp; [简体中文](README.zh-CN.md)
 
@@ -184,6 +186,6 @@ The **vendored upstream code** under `environment/repo/` (nanoGPT, torchtitan, v
   title  = {$\Phi$-Bench: Can Large Language Models Engineer the Infrastructure That Powers Them?},
   author = {Φ-Bench contributors},
   year   = {2026},
-  url    = {http://llminfrabench.com/}
+  url    = {https://faibench.org/}
 }
 ```
