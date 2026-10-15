@@ -20,7 +20,7 @@ export KB_BASELINE_MODULE=/opt/verifier-baseline/tile_planner.py
 HARD=(); add_hard(){ HARD+=("$1"); }
 correctness_ok=true; trusted_restore_ok=true; hidden_correctness_ok=true
 baseline_ok=true; benchmark_ok=true; anti_cheat_ok=true
-expected_cases=14; actual_cases=0
+expected_cases=15; actual_cases=0
 speedup=1.0; ref_speedup=1.0; hw="cpu"; cand_traf=0; base_traf=0
 
 cd "$REPO" 2>/dev/null || { add_hard "repo_missing"; correctness_ok=false; }

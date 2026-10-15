@@ -2,10 +2,10 @@
   "schema_version": "kernelbench_correctness_manifest_v1",
   "task_id": "arch-tiling-dram-traffic-min",
   "task_kind": "acceleration",
-  "expected_case_count": 14,
+  "expected_case_count": 15,
   "primary_workload": "tile-plan-dram-traffic",
-  "ref_speedup": 60.0,
-  "ref_speedup_note": "Anchor 63.46 calibrated in oracle mode on the authoring CPU lane (Intel Sapphire Rapids). tests/ref_speedup.txt is authoritative at scoring; this file is only the in-image fallback. See tests/ref_speedup.caveat.md to re-measure on your hardware.",
+  "ref_speedup": 1.0,
+  "ref_speedup_note": "The authoritative anchor is tests/ref_speedup.txt, which is uploaded at scoring time and never baked in. This in-image copy deliberately carries no usable anchor (ref_speedup <= 1 is a hard gate in tests/test.sh), because the solver can read this file: mount tests/ or the verifier fails loudly instead of scoring against a wrong anchor. The metric is a deterministic COMPUTED byte total, so the anchor is reproducible without re-running the reference -- see tests/ref_speedup.caveat.md.",
   "metric": "peak_memory",
   "direction": "higher_is_better",
   "target_hardware": "cpu (x86-64 Sapphire Rapids; pure-Python stdlib -> the metric is a deterministic COMPUTED byte total derived from the returned plan, NOT a measured allocation; no valgrind, no GPU)",
@@ -25,7 +25,8 @@
     "error_bad_cap",
     "metamorphic_traffic_scale_esz",
     "work_evidence_traffic_matches_model",
-    "anti_hacking_min_traffic_over_cap_rejected"
+    "anti_hacking_min_traffic_over_cap_rejected",
+    "anti_hacking_plan_materialized_once"
   ],
   "public_symbol": "plan_tiling",
   "primary_edit_paths": [

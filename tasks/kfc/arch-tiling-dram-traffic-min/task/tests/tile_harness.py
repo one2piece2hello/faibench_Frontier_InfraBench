@@ -83,6 +83,21 @@ def plan_is_valid(problems, cap, plan):
     return True, "ok"
 
 
+def freeze_plan(plan):
+    """Materialise a plan exactly once, for validation AND for scoring.
+
+    ``plan_is_valid`` consumes the object it is handed and so does ``plan_traffic``, so a
+    caller that passes the candidate's raw return value to both can be fooled by a lazy
+    object whose first iteration yields valid tiles and whose later iterations yield
+    something cheaper: validity would be checked on one set of tiles and the traffic
+    charged for another. Materialise here and hand the frozen list to both.
+    """
+    try:
+        return [list(tile) for tile in plan]
+    except TypeError:
+        return plan  # not iterable -- plan_is_valid reports the reason
+
+
 def plan_traffic(problems, plan):
     """Total off-chip bytes moved by a (assumed valid) plan."""
     return sum(traffic_of(p, list(t)) for p, t in zip(problems, plan))
@@ -134,15 +149,22 @@ def make_bench_corpus():
     """A fixed list of (problems, cap) instances. Deterministic; the traffic is a pure
     computed byte total so there is no measurement noise. Shapes are chosen so a
     capacity-respecting large tiling moves far less data than the smallest-tile
-    baseline, but the largest tiles do NOT fit -> a real constrained search."""
+    baseline, but the largest tiles do NOT fit -> a real constrained search.
+
+    Every axis offers ALL divisors of its dimension. The traffic depends only on Tm and
+    Tn, and the two compete for the same capacity, so a bigger Tm is paid for with a
+    smaller Tn: choosing them one axis at a time (grow Tm as far as it fits, then Tn)
+    overshoots. Capping the choice ranges hid that trade-off -- the one-axis-at-a-time
+    choice landed exactly on the traffic minimum, which left the metric with no headroom
+    over its own reference solution (see tests/ref_speedup.caveat.md)."""
     instances = []
     # instance A: three square-ish GEMMs, esz=2 (fp16), cap = 24 KiB.
     probsA = []
     for (M, N, K) in ((256, 256, 256), (512, 128, 256), (128, 384, 192)):
         probsA.append({
             "M": M, "N": N, "K": K, "esz": 2,
-            "tm_choices": _divisors_upto(M, 128),
-            "tn_choices": _divisors_upto(N, 128),
+            "tm_choices": _divisors_upto(M, M),
+            "tn_choices": _divisors_upto(N, N),
             "tk_choices": _divisors_upto(K, 64),
         })
     instances.append((probsA, 24 * 1024))
@@ -151,8 +173,8 @@ def make_bench_corpus():
     for (M, N, K) in ((768, 64, 320), (96, 640, 256)):
         probsB.append({
             "M": M, "N": N, "K": K, "esz": 4,
-            "tm_choices": _divisors_upto(M, 96),
-            "tn_choices": _divisors_upto(N, 96),
+            "tm_choices": _divisors_upto(M, M),
+            "tn_choices": _divisors_upto(N, N),
             "tk_choices": _divisors_upto(K, 64),
         })
     instances.append((probsB, 48 * 1024))

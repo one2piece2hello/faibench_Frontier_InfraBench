@@ -4,7 +4,9 @@
 Deterministic COMPUTED byte total (no valgrind, no timing): for a fixed corpus of
 (problems, cap) instances, each mode's ``plan_tiling`` returns a plan, the harness
 INDEPENDENTLY validates it and sums the modeled off-chip bytes moved. ``test.sh`` takes
-the ratio baseline_traffic / candidate_traffic.
+the ratio baseline_traffic / candidate_traffic. The candidate's plan is materialised once
+(``tile_harness.freeze_plan``) before it is validated and charged, so both steps always
+see the same tiles.
 
 Modes:
   candidate  plan every instance with /app/repo/tile_planner.py; validate; print
@@ -18,6 +20,7 @@ import os
 import sys
 
 from tile_harness import (
+    freeze_plan,
     load_candidate,
     load_module,
     make_bench_corpus,
@@ -36,7 +39,7 @@ def _baseline_module():
 def _plan_corpus_traffic(module, corpus):
     total = 0
     for ii, (problems, cap) in enumerate(corpus):
-        plan = module.plan_tiling(problems, cap)
+        plan = freeze_plan(module.plan_tiling(problems, cap))
         ok, reason = plan_is_valid(problems, cap, plan)
         if not ok:
             return total, False, f"instance[{ii}]: {reason}"
@@ -70,8 +73,8 @@ def mode_verify():
     base = _baseline_module()
     bad = 0
     for ii, (problems, cap) in enumerate(corpus):
-        cok, creason = plan_is_valid(problems, cap, cand.plan_tiling(problems, cap))
-        bok, breason = plan_is_valid(problems, cap, base.plan_tiling(problems, cap))
+        cok, creason = plan_is_valid(problems, cap, freeze_plan(cand.plan_tiling(problems, cap)))
+        bok, breason = plan_is_valid(problems, cap, freeze_plan(base.plan_tiling(problems, cap)))
         if not cok:
             print(f"VERIFY_FAIL candidate instance[{ii}]: {creason}")
             bad += 1
