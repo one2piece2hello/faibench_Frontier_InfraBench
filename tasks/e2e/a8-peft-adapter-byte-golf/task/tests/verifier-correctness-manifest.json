@@ -10,7 +10,7 @@
   "repo_baked": "huggingface/peft",
   "source_commit_app_repo": "e4fe61b43151da1125b8d6e6846250f66150e58b",
   "base_model": "Qwen2.5-0.5B-Instruct (bf16, 24L/896d/14H/2KV, vocab 151936, tied embeddings)",
-  "compute_reward_sha256": "53c59691456afdce371b767234b53dffa080b5f19676f089ee8d4295a991ab9a",
+  "compute_reward_sha256": "b21f3e67bf5e318acd02ce2d54daaddeb31b0a963e388af514410d714e8a78a2",
   "test_sh_sha256": "a2cb6b632036a95381b996f34e47438ca100dbcb5d2e71a5e5210b570fc96bbc",
   "lever": "ADAPTER BYTES (A8 参数高效微调 PEFT). A HARD cap on the total size of the ONLY two files that travel from the solver's fine-tune into the scored eval (adapter.bin + adapter_entry.py), re-measured by the harness with stat(). The harness loads the FROZEN base weights itself from a digest-checked copy and quarantines every solver-writable path for the eval window, so the cap is an information-theoretic bound on how much adaptation can reach the eval. The solver maximizes held-out quality under that cap. Rank-1 bf16 LoRA on q/v is the model-visible FLOOR; an int8-quantized, importance-allocated, tuned LoRA at the full budget is the STRONG baseline (1.0 anchor); sub-8-bit adapter quantization (QLoRA/LoftQ-family), shared or seeded random bases (VeRA), DoRA magnitude/direction decomposition, norm-and-bias tuning, adaptive rank redistribution (AdaLoRA), tensor-train factorization (DuQTTA) and a leaner container are the un-capped CEILING — all under the SAME measured byte cap.",
   "thresholds": {

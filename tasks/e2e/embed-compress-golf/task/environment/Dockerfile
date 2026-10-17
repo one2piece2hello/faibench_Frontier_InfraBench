@@ -96,7 +96,7 @@ RUN set -eu; \
     test "$n" -ge 100 || { echo "BUILD_ASSERT_FATAL: /app/repo has only $n files - clone mutilated"; exit 1; }
 RUN printf 'torch==2.7.0\n' > /tmp/constraints.txt \
  && pip install --no-cache-dir --constraint /tmp/constraints.txt "numpy>=1.26,<3" "pyarrow==17.0.0" \
- && pip install --no-cache-dir --constraint /tmp/constraints.txt -e /app/repo \
+ && pip install --no-cache-dir --constraint /tmp/constraints.txt "transformers>=4.41,<5" -e /app/repo \
  && python -c "import sentence_transformers, pathlib; p=pathlib.Path(sentence_transformers.__file__).resolve(); print('sentence-transformers', sentence_transformers.__version__, p); assert str(p).startswith('/app/repo/'), p" \
  && python -c "import torch; assert torch.__version__.startswith('2.7.0'), torch.__version__"
 
