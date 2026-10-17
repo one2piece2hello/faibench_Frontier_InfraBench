@@ -48,7 +48,7 @@ name = "fusion_dag_opcount_speedup"
 goal = "maximize"
 metric_kind = "op_count"
 reward_formula = "performance (the reward specification): reward = min(1.0, ln(speedup/ref_speedup)/ln(ref_speedup)) if speedup > ref_speedup else 0.0; matching the oracle scores 0.5, reaching oracle^2 caps at 1.0, range [0,1]. Pre-gates that force reward=0: build/import failure, ANY correctness case fail, anti-cheat trip, forbidden-path edit, speedup<=1, ref_speedup<=1. ONE graded submission only (min=max=1); submit == finalize."
-ref_speedup = 11.29167
+ref_speedup = 3.360308
 ref_speedup_source = "tests/ref_speedup.txt"
 calibrated_on = "Intel Sapphire Rapids CPU lane"
 correctness_gates = [

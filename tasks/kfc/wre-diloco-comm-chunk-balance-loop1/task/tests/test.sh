@@ -117,8 +117,8 @@ abs_speedup=$(python3 -c "print(round($speedup*$ref_speedup,6))" 2>/dev/null || 
 if [ "$correctness_ok" = true ] && [ "$nhard" -eq 0 ]; then
   if [ "$(python3 -c "print(1 if $ref_speedup<=1.0 else 0)" 2>/dev/null || echo 1)" = "1" ]; then
     add_hard "ref_speedup_invalid"
-  elif [ "$(python3 -c "print(1 if $abs_speedup<=1.0 else 0)" 2>/dev/null || echo 1)" = "1" ]; then
-    add_hard "speedup_not_above_baseline"
+  elif [ "$(python3 -c "print(1 if $abs_speedup<1.0 else 0)" 2>/dev/null || echo 1)" = "1" ]; then
+    add_hard "speedup_below_baseline"
   fi
   nhard="${#HARD[@]}"
 fi
@@ -127,8 +127,8 @@ if [ "$nhard" -eq 0 ] && [ "$correctness_ok" = true ]; then
   reward=$(python3 -c "
 import math
 sp=$abs_speedup; ref=$ref_speedup
-r=min(1.0, max(0.0, min(1.0, math.log(sp) / math.log(ref) - 1.0)))
-print(round(max(0.0,min(1.0,r)),6))" 2>/dev/null || echo 0.0)
+r=0.5 * math.log(sp) / math.log(ref) if sp > 1.0 else 0.0
+print(round(max(0.0, min(1.0, r)), 6))" 2>/dev/null || echo 0.0)
 fi
 hard_str=""; [ "$nhard" -gt 0 ] && hard_str="${HARD[*]}"
 export WRE_MODE="$MODE" WRE_REWARD="$reward" WRE_SPEEDUP="$abs_speedup" \

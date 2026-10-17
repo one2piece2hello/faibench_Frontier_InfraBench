@@ -1,13 +1,17 @@
 #!/usr/bin/env python3
 """diloco-comm-chunk-balance compute_reward — PERFORMANCE reward formula.
 
-    reward = min(1.0, ln(speedup/ref_speedup)/ln(ref_speedup)) if speedup > ref_speedup else 0.0          range [0.0, 1.0]
+    reward = min(1.0, 0.5 * ln(speedup)/ln(ref_speedup)) if speedup > 1.0 else 0.0          range [0.0, 1.0]
 
 The verifier measures vs_oracle = oracle_ms / candidate_ms (the oracle is the 1.0
 anchor because the empty/stub start cannot be timed). Absolute speedup vs the
 BASELINE is therefore  speedup = vs_oracle * ref_speedup, where ref_speedup is the
 oracle's speedup over the naive baseline. So the oracle scores 0.5, the naive
 baseline scores 0.0, and oracle^2 caps at 1.0.
+
+The metric is a deterministic byte total, so no candidate can beat the oracle:
+the gate must therefore be inclusive at the oracle (`speedup > 1.0`, i.e. cross the
+baseline) instead of `speedup > ref_speedup`, which no submission can satisfy.
 
 Pre-gates (any one hit => reward 0.0, the formula is not entered): the correctness
 gate in test.sh (which owns scope_ok / import_origin_ok / correctness_ok and writes
@@ -46,7 +50,7 @@ def main():
         hard.append("speedup_not_above_baseline")
     reward = 0.0
     if not hard:
-        reward = min(1.0, max(0.0, min(1.0, math.log(speedup) / math.log(ref_speedup) - 1.0)))
+        reward = 0.5 * math.log(speedup) / math.log(ref_speedup) if speedup > 1.0 else 0.0
         reward = max(0.0, min(1.0, reward))
     out = {
         "task_type": "performance",
