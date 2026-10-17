@@ -82,12 +82,12 @@ RUN pip install --no-cache-dir --extra-index-url https://download.pytorch.org/wh
 #      No `|| true`: a failed dependency install must fail the build.
 RUN printf 'torch==2.7.1\ntriton==3.3.1\n' > /tmp/vllm-constraints.txt \
  && pip install --no-cache-dir --extra-index-url https://download.pytorch.org/whl/cu126 \
-        --constraint /tmp/vllm-constraints.txt "vllm==0.10.1.1" \
+        --constraint /tmp/vllm-constraints.txt "vllm==0.10.1.1" "transformers>=4.55,<5" \
  && python -c "import torch; assert torch.__version__.startswith('2.7.1'), torch.__version__; print('torch pin held:', torch.__version__)"
 
 # ---- served model weights from Hugging Face (public, Apache-2.0). NOT vendored in git. ----
 ENV HF_ENDPOINT=${HF_ENDPOINT} HF_HUB_DISABLE_TELEMETRY=1
-RUN pip install --no-cache-dir "huggingface_hub[cli]" \
+RUN pip install --no-cache-dir "huggingface_hub[cli]>=0.24,<1" \
  && huggingface-cli download "${MODEL_ID}" --local-dir /app/model --exclude "original/*" \
  && test -f /app/model/config.json \
  && ls /app/model/*.safetensors >/dev/null \
