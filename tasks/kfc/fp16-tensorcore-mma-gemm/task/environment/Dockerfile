@@ -147,12 +147,14 @@ WORKDIR /app/repo
 #      tests/test.sh resolves KB_BASELINE_MODULE=/opt/verifier-baseline/<file>; when that file
 #      is absent the whole benchmark block is SKIPPED and the run hard-fails with
 #      `validation_incomplete` (reward 0) no matter how good the submission is.
-#      It is a pristine copy of the shipped, pre-edit scope file, taken here at build time —
+#      It is a pristine copy of the shipped, pre-edit scope files, taken here at build time —
 #      exactly what the original task image baked. `cmp` proves the copy is byte-identical.
 RUN mkdir -p /opt/verifier-baseline \
  && cp "/app/repo/gemm.py" "/opt/verifier-baseline/gemm.py" \
  && cmp "/app/repo/gemm.py" "/opt/verifier-baseline/gemm.py" \
- && chmod 0444 "/opt/verifier-baseline/gemm.py" \
+ && cp "/app/repo/gemm_kernel.cu" "/opt/verifier-baseline/gemm_kernel.cu" \
+ && cmp "/app/repo/gemm_kernel.cu" "/opt/verifier-baseline/gemm_kernel.cu" \
+ && chmod 0444 "/opt/verifier-baseline/gemm.py" "/opt/verifier-baseline/gemm_kernel.cu" \
  && echo "frozen baseline(s) baked: $(ls -l /opt/verifier-baseline | tail -n +2 | wc -l) file(s)"
 
 RUN python - <<'PY'
