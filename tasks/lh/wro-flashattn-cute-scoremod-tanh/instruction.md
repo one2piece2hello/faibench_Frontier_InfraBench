@@ -60,6 +60,11 @@ Correctness is checked over many hidden cases spanning different batch sizes, se
 dimensions, causal and non-causal attention, half-precision dtypes, and softmax scales. The timing
 workload runs one forward over a single long-sequence batch with many heads.
 
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
+
 ## Rules
 - Preserve the entry point's signature and numerical behavior (within tolerance), including the
   gated-tanh score-mod transform applied to the scaled scores, causal masking, the grouped-query

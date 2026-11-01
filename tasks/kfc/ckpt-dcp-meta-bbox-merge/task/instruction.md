@@ -39,15 +39,16 @@ takes the max of the raw `offset` (forgetting to add `size`), or otherwise mis-r
 scores 0.
 
 ## Performance
-After correctness passes, reward is the speedup of your implementation's host wall-clock time
-relative to the reference, measured over a large shard set with many tensors. A naive approach
+The grader times your implementation on a large shard set with many tensors. A naive approach
 that, for each tensor id, scans all `N` shard rows to find its maximum end offset does work that
 grows as `O(G * N)`. Computing every shard's end once and scatter-reducing the maximum into a
 per-tensor array in a single vectorized pass is `O(N)`. The gap grows with the number of tensors
-`G`. Scoring is a bounded log curve on that speedup: reaching the reference-grade
-implementation's speed scores 0.5, and going substantially beyond it approaches the
-1.0 ceiling; failing to beat the slow baseline at all scores 0. Correctness is a hard
-gate — any failing case scores 0 regardless of speed.
+`G`.
+
+Let `s` be your speedup over the naive baseline and `r` the reference implementation's
+speedup over that same baseline. A failed validity check, `r <= 1`, or `s <= r` gives
+zero reward. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: matching the
+reference earns 0, and reaching `s = r²` earns 1.
 
 ## Rules
 - Change only `submission/kernel.py`. Implement the complete contract; keep the public signatures.

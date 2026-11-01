@@ -59,6 +59,11 @@ a multi-thousand `seqlen`, tens of heads, a per-head state dimension, grouped
 `B`/`C` shared across heads, and a power-of-two `chunk_size`. Optimize for this
 regime; the hidden benchmark also covers additional shapes.
 
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
+
 ## Rules
 
 - Preserve the public entry point's signature and behavior (within tolerance).

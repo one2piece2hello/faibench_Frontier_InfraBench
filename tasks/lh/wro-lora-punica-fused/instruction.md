@@ -29,6 +29,11 @@ The benchmark drives batched multi-LoRA application: thousands of tokens each ro
 to one of several LoRA adapters, small adapter rank, shrink then expand. A hidden set
 covers additional shapes.
 
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
+
 ## Rules
 - Preserve the ops' signatures and behavior (within tolerance).
 - Do **not** read, run, reproduce, or infer the scoring/verifier code, hidden test

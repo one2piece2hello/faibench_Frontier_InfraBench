@@ -42,12 +42,13 @@ the inversion is applied last) must be preserved exactly.
 ## How you are scored
 
 You get **exactly one** graded submission (`bash /opt/loop/submit.sh`) — submitting ends the task
-and a second call is refused. The reward is a log-curve function of the wall-clock **speedup** of
-the benchmark workload against the frozen slow baseline that ships in this repository, in `[0, 1]`:
-matching the reference (oracle) implementation's speed scores **0.5**, being as far past it again
-as it is past the baseline caps the reward at **1.0**, and merely matching the baseline scores
-**0.0**. It is **gated on exact correctness** — a single mismatched finalized value scores 0
-regardless of speed. Think the change through and self-test before you submit; you cannot iterate.
+and a second call is refused. A single mismatched finalized value scores 0 regardless of speed.
+Think the change through and self-test before you submit; you cannot iterate.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Anti-cheat red line (A-only)
 

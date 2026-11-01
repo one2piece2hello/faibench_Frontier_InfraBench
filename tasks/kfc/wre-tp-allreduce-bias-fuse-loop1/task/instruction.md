@@ -69,6 +69,11 @@ that accumulates one rank at a time in a Python loop is correct but issues `R` s
 re-reads/writes the full accumulator `R` times, moving several times the memory traffic (and the
 gap grows with `R`).
 
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
+
 ## Workload shape (what the hidden benchmark covers)
 
 - `[R, T, D]` `bfloat16` partial stacks with `R` up to 16, `T` up to a few thousand, and `D` up to

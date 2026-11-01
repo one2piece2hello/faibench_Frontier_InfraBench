@@ -56,9 +56,12 @@ Both lists must match the reference exactly, in query order. A shortcut that adv
 the current state alone (ignoring the sampled token) is wrong whenever a state has edges
 on multiple tokens and scores zero. The public signature must remain unchanged.
 
-The reward increases as the wall-clock time of `batch_advance` decreases on the benchmark
-workload, subject to the correctness requirement above. A correct submission that changes
-nothing scores about 1.0.
+The grader times `batch_advance` on the benchmark workload.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Notes
 

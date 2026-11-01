@@ -1,4 +1,4 @@
-# Performance Optimization Task
+# Implementation Task: Causal Long Convolution
 
 You are given a clean Python workspace with a single editable file:
 
@@ -13,9 +13,8 @@ implementation from anywhere else) causes the whole task to score 0.
 
 `submission/kernel.py` ships a required function `causal_conv` whose body is **not implemented**
 (it raises `NotImplementedError`). Implement it to the contract below so it is numerically
-correct, then make it as fast as possible on the hidden benchmark workloads. Reward is measured on
-GPU (H20). Correctness is a hard prerequisite: a fast-but-wrong implementation, or one that still
-raises `NotImplementedError`, scores 0.
+correct on the hidden GPU (H20) workloads. Reward is binary: 1 if every correctness case and
+validity check passes, 0 otherwise. A faster implementation earns no additional credit.
 
 ## Interface contract (implement exactly this)
 
@@ -58,15 +57,13 @@ Once correct, the function is timed on GPU with CUDA events (block of medians, t
 regenerated every timed iteration; a warmup window is discarded). The primary benchmark uses a
 **long** sequence length `L`. Evaluating the convolution directly — an `O(L^2)` sum per output
 position, or equivalently a dense lower-triangular Toeplitz matrix apply — is correct but its cost
-grows with `L^2`. A full-length convolution can instead be evaluated in `O(L log L)`; expressing it
-so the work grows as `L log L` rather than `L^2` is the reference point. The score is dominated by
-the largest `L`.
+grows with `L^2`. A full-length convolution can instead be evaluated in `O(L log L)`.
+Timing is diagnostic; it does not enter the binary reward.
 
 ## Workload shape (what the hidden benchmark covers)
 
 - `bfloat16` `u [B, H, L]` and `k [H, L]`, with `L` up to ~2048, modest `B` and `H`, single GPU.
 - `L=1`, tiny, odd, and non-power-of-two shapes as well as large ones.
-- The score is dominated by the largest shapes, so a fast tiny case cannot offset a slow large one.
 
 ## Rules
 

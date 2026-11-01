@@ -103,9 +103,13 @@ Contract notes that are easy to break:
 
 ## How you are scored
 
-Your reward is the wall-clock **speedup** of the benchmark workload against the frozen slow
-baseline that ships in this repository, and it is **gated on exact correctness** — one
-mismatched element scores 0 regardless of speed. The benchmark drains 1536 CTS batches over an
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
+
+Exact correctness is required: one mismatched element scores 0 regardless of speed.
+The benchmark drains 1536 CTS batches over an
 8-queue-pair, 2-device fabric (roughly 55k work requests); there is a large amount of headroom
 and it **grows with the batch count**, so an algorithmically better plan builder wins by much
 more than a micro-optimized one.

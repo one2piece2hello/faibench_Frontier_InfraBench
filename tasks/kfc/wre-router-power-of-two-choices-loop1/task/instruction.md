@@ -43,15 +43,19 @@ function `NotImplementedError`, routes to the more-loaded replica, mishandles ti
 increment the load after each request fails and scores 0.
 
 ## Performance
-After correctness passes, reward is the speedup of your implementation's host wall-clock time
-relative to the reference, measured over a large stream of requests. The routing is **inherently
+After correctness passes, the grader times your implementation on the host over a large stream
+of requests. The routing is **inherently
 sequential** — each choice depends on the loads produced by all earlier requests — so there is no
 batched shortcut for the decisions themselves. The cost that dominates is the **per-request
 interpreter overhead**: a naive loop that reads and updates the load through per-element `numpy`
 scalar indexing (`load[a]`, `load[chosen] += 1`, `cand_a[i]`) does far more work per request than
 a loop that operates on lightweight native scalars, because each `numpy` 0-d scalar access boxes
-and unboxes an array object. The absolute gap grows with the number of requests `N`. Matching the
-reference speed scores 1.0; beating it scores higher.
+and unboxes an array object. The absolute gap grows with the number of requests `N`.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Rules
 - Change only `submission/kernel.py`. Implement the complete contract; keep the public signatures.

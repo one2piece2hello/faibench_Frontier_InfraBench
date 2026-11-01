@@ -44,13 +44,17 @@ on the input (a constant/cached output is rejected). A submission that leaves th
 deviates from last-write-wins fails and scores 0.
 
 ## Performance
-After correctness passes, reward is the speedup of your implementation's host wall-clock time
-relative to the reference, measured over many queries against many declarations. A naive approach
+After correctness passes, the grader times your implementation on the host over many queries
+against many declarations. A naive approach
 that, for each query, scans the declarations from last to first until it finds a match does work
 that grows as `O(Q * D)`; building the name-to-file routing table **once** (a single pass that lets
 later declarations overwrite earlier ones) and then resolving all queries against it is `O(D + Q)`
-(and runs in compiled code). The gap grows with the number of declarations `D`. Matching the
-Reward is on a `[0, 1]` scale and rises with your speedup: matching the strong reference implementation scores about **0.5**, and going substantially beyond it approaches **1.0**. Merely matching the slow naive approach scores **0**, as does any correctness failure.
+(and runs in compiled code). The gap grows with the number of declarations `D`.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Rules
 - Change only `submission/kernel.py`. Implement the complete contract; keep the public signatures.

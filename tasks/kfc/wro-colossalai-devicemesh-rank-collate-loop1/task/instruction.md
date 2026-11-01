@@ -45,9 +45,12 @@ groups = mesh._collate_global_ranks_in_same_process_group(global_rank)
 
 ## How your work is scored
 
-Your solution is timed end-to-end on a set of benchmark workloads and compared, on wall-clock,
-against the frozen starting state of the scope file. Faster correct solutions score higher.
-Correctness is a hard prerequisite: an incorrect solution scores zero regardless of speed.
+Your solution is timed end-to-end on the benchmark workloads.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## 🔴 Rules (violation ⇒ the whole task scores 0)
 

@@ -47,12 +47,16 @@ contract must remain unchanged:
   reference within a relative-norm tolerance, over a hidden suite of diverse shapes and
   group sizes (small, large, rectangular, ragged, non-power-of-two, few-groups,
   many-groups). Every output element must apply the correct per-group scale and subtract
-  the correct per-group integer zero-point. The fraction of shapes that pass is graded;
-  an implementation that is correct only for one specific shape or group size scores
-  partially. Full performance credit requires passing every shape.
-- **Performance** (reward): wall-clock speedup of your implementation over the frozen
+  the correct per-group integer zero-point.
+  Every tested shape must pass; partial correctness earns no reward.
+- **Measured speedup**: wall-clock speedup of your implementation over the frozen
   baseline currently in `w8a16/matmul.py`, measured on a hidden small-`M`, large-`K`/`N`
-  fp16 workload with warmup and repeated timed iterations. Higher is better.
+  fp16 workload with warmup and repeated timed iterations.
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## Rules (A-only red line)
 

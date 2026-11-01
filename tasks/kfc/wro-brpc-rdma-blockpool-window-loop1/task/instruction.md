@@ -208,9 +208,13 @@ Contract notes that are easy to break:
 
 ## How you are scored
 
-Your reward is the wall-clock **speedup** of the benchmark workload against the frozen slow
-baseline that ships in this repository, and it is **gated on exact correctness** — one mismatched
-element scores 0 regardless of speed. The benchmark drives three transfer configurations —
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
+
+Exact correctness is required: one mismatched element scores 0 regardless of speed.
+The benchmark drives three transfer configurations —
 several hundred allocations, a work-request cut of several hundred messages at up to 64
 scatter/gather entries each, and several hundred completion events per step — across the three
 block tiers and fourteen registered regions. There is a large amount of headroom and it **grows

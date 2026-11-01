@@ -10,7 +10,12 @@ At the required capacity a DENSE model is too compute-heavy to train well in the
 top-k Mixture-of-Experts trains far more steps at the same total capacity — IF you realize the
 sparsity as real single-card throughput (sorted/grouped-GEMM token dispatch) with a balanced router
 (load-balancing aux loss) and a tuned top-k / experts / capacity frontier. The shipped starter is a
-plain dense model at the floor and is the bar to beat.
+plain dense model at the floor.
+
+For the final score, let `s = baseline_bpb / candidate_val_bpb` on the held-out
+split and let `r` be the calibrated reference recipe's ratio at the same budget.
+A failed validity check, an invalid reference (`r <= 1`), or `s <= r` scores 0.
+Otherwise the reward is `min(1, ln(s/r) / ln(r))`: it reaches 1 at `s >= r²`.
 
 ## Entry contract (start from the shipped files)
 

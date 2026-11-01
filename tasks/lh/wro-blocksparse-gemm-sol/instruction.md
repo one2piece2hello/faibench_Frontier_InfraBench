@@ -61,14 +61,16 @@ must remain unchanged:
   reference within a relative-norm tolerance, over a hidden suite of diverse shapes,
   block sizes, and densities (small, large, rectangular, ragged, non-power-of-two, very
   sparse, nearly dense, single-block). Every stored block must be placed at its correct
-  `k_idx` logical position and every pruned block treated as zero. The fraction of shapes
-  that pass is graded; an implementation that assumes contiguous or all-nonzero blocks,
-  ignores `k_idx`, or only handles the timed shape scores partially. Full performance
-  credit requires passing every shape.
-- **Performance** (reward): wall-clock speedup of your implementation over the frozen
+  `k_idx` logical position and every pruned block treated as zero.
+  Every tested shape must pass; partial correctness earns no reward.
+- **Measured speedup**: wall-clock speedup of your implementation over the frozen
   baseline currently in `blocksp/matmul.py`, measured on a small-M, large-K/N,
-  low-block-density fp16 workload with warmup and repeated timed iterations. Higher is
-  better.
+  low-block-density fp16 workload with warmup and repeated timed iterations.
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## Rules (A-only red line)
 

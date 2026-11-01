@@ -31,9 +31,12 @@ padded = pad_routing_map(routing_map, pad_multiple)
 - Behavior must hold across token counts, expert counts, and `pad_multiple` values.
 
 ## How your work is scored
-Timed end-to-end through the public function on benchmark workloads, wall-clock,
-against the frozen starting state of the scope file. Faster correct solutions score
-higher; correctness is a hard prerequisite (an incorrect result scores zero).
+The grader times the public function end-to-end on the benchmark workloads.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## 🔴 Rules (violation ⇒ the whole task scores 0)
 - Do **NOT** read, cat, grep, open, or edit any verifier/scoring/timing/hidden-test

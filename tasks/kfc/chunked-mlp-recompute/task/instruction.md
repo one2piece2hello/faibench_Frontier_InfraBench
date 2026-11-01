@@ -1,4 +1,4 @@
-# Performance Optimization Task
+# Implementation Task: Gated MLP Forward and Backward
 
 You are given a clean Python workspace with a single editable file:
 
@@ -25,8 +25,8 @@ pass that produces an output `y`, and a manual backward pass that, given the gra
 of the loss with respect to `y`, produces the gradient with respect to the block input
 `x`. The forward pass creates several **large intermediate activations** of shape
 `[T, I]`; a straightforward implementation that keeps all of them resident in order to
-run the backward pass has a high memory high-water mark. The score rewards keeping that
-high-water mark low while returning exactly the same numbers.
+run the backward pass has a high memory high-water mark. Chunking or recomputation can
+reduce that footprint without changing the outputs.
 
 ## Interface contract (implement exactly this)
 
@@ -88,23 +88,19 @@ particular the `silu` derivative term — before memory is measured. Outputs mus
 on the inputs (the grader runs the op on two different inputs of the same shape and rejects
 identical outputs).
 
-## Scoring (peak GPU memory — lower is better)
+## Scoring
 
-Once correct, the **peak GPU memory** used by a `custom_kernel` call is measured on the hidden
-primary workload with `torch.cuda.max_memory_allocated()` (the peak allocator high-water during
-the forward+backward, with the input regenerated each measured iteration). The reward is the
-**reference implementation's peak divided by your peak** — a memory-efficient reference scores
-`1.0`, a wasteful implementation that materializes and holds all of the large `[T, I]`
-intermediates at once scores well below `1.0`, and a tighter implementation scores at or above
-`1.0`. The score is dominated by the largest shapes.
+Reward is binary: 1 if all correctness cases and validity checks pass, 0 otherwise.
+After correctness passes, the grader measures peak GPU memory with
+`torch.cuda.max_memory_allocated()`. The measurement must be valid; reducing the peak
+does not award partial or extra credit.
 
 ## Workload shape (what the hidden benchmark covers)
 
 - Token-major `bfloat16` activations at transformer-MLP scale: `T` up to ~8192, `H` up to 4096,
   `I` up to ~14336, on a single GPU; the large `[T, I]` intermediates dominate the footprint.
 - Both small/boundary shapes (size-1 rows, non-tile-multiple dims, `chunk_size` not dividing `T`)
-  and large shapes. The score is dominated by the largest shapes, so a light small case cannot
-  offset a heavy large one.
+  and large shapes. Every correctness case must pass.
 
 ## Rules
 

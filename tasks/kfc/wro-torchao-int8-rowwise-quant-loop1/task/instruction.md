@@ -51,13 +51,12 @@ are available for you to call.
 
 ## How your work is scored
 
-Your solution is timed end-to-end through the public function on a set of benchmark
-workloads and compared, on wall-clock, against the frozen starting state of the
-scope file. The reward is a log-curve function of that speedup, in `[0, 1]`:
-matching the reference (oracle) implementation's speed scores **0.5**, being as far
-past it again as it is past the frozen baseline caps the reward at **1.0**, and
-merely matching the frozen baseline scores **0.0**. Correctness is a hard
-prerequisite: an incorrect solution scores zero regardless of speed.
+Your solution is timed end-to-end through the public function on the benchmark workloads.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## 🔴 Rules (violation ⇒ the whole task scores 0)
 

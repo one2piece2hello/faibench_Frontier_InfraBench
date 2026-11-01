@@ -44,13 +44,18 @@ burst together) instead of by round first, or miscomputes the within-tenant roun
 scores 0.
 
 ## Performance
-After correctness passes, reward is the speedup of your implementation's host wall-clock time
-relative to the reference, measured over a **large** balanced multi-tenant queue. A naive approach
+After correctness passes, the grader times your implementation on the host over a **large**
+balanced multi-tenant queue. A naive approach
 that groups requests into per-tenant Python lists and then interleaves them round-robin in a nested
 Python loop does that work in the interpreter; computing every request's within-tenant round with a
 vectorized group-by (a stable sort plus per-group offsets from bin counts), forming a single
 composite `(round, tenant)` sort key, and scattering positions with one argsort runs in compiled
-code and is far faster. The gap grows with the queue length `N`. Reward is on a `[0, 1]` scale and rises with your speedup: matching the strong reference implementation scores about **0.5**, and going substantially beyond it approaches **1.0**. Merely matching the slow naive approach scores **0**, as does any correctness failure.
+code and is far faster. The gap grows with the queue length `N`.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Rules
 - Change only `submission/kernel.py`. Implement the complete contract; keep the public signatures.

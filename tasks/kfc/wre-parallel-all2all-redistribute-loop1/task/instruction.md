@@ -85,6 +85,11 @@ one `(source, destination)` pair at a time is correct but pays a fixed cost for
 so the number of launched operations does not scale with the grid — is exactly the
 point.
 
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
+
 ## Workload shape (what the hidden benchmark covers)
 
 - `bfloat16` CUDA tensors `x [W, W, chunk, D]`, `W` up to ~64, modest `chunk` and

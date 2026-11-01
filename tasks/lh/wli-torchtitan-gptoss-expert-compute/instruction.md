@@ -54,10 +54,10 @@ segment-matmul (it is **not** part of your editable scope — do not try to "fix
    output includes the down-projection bias.
 
 ## How you are graded
-A hidden weighted suite of small deterministic CPU cases checks each contract point plus
+A hidden suite of small deterministic CPU cases checks each contract point plus
 end-to-end cases that run `MoE.forward` and feed its per-expert counts into
-`_experts_forward` (coupling both files). Your reward is the weighted fraction of cases that
-pass (0..1). Partial fixes earn partial credit; restoring both files fully earns 1.0.
+`_experts_forward` (coupling both files). Final reward is binary: 1 if the submission builds,
+imports, passes every case, and satisfies the edit-scope and integrity checks; otherwise 0.
 
 ## Submission (single submission — this is a correctness task)
 

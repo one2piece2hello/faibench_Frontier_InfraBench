@@ -68,13 +68,16 @@ available for you to call.
 - **Correctness** (hard gate): the operation's output must match the independent fp32
   reference computation within a relative-norm tolerance, over a hidden suite of diverse
   shapes (short and long `T`, several non-power-of-two `T`, and varied `B`/`H` and
-  feature/slot widths `K`/`V`/`M`). The fraction of shapes that pass is graded; an
-  implementation that is correct only for one specific shape (e.g. only power-of-two `T`,
-  or only the single benchmark length) scores partially. Full performance credit requires
-  passing every shape.
-- **Performance** (reward): wall-clock speedup of your implementation over the frozen
+  feature/slot widths `K`/`V`/`M`).
+  Every tested shape must pass; partial correctness earns no reward.
+- **Measured speedup**: wall-clock speedup of your implementation over the frozen
   baseline currently in `fla/ops/abc/chunk.py`, measured on a long-sequence workload
-  with warmup and repeated timed iterations. Higher is better.
+  with warmup and repeated timed iterations.
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## Rules (A-only red line)
 

@@ -87,14 +87,16 @@ negative-stride inputs. Every returned array is compared against an independent 
 contiguity and value — no input may be mutated, and 157 error contracts must fire.
 `NotImplementedError` anywhere scores 0.
 
-Once correct, you are scored on **wall-clock speed** on one large hidden batch (of the order of tens of
+The grader measures CPU time on one large hidden batch (of the order of tens of
 thousands of catalog rows and tens of thousands of requests, plus tens of thousands of catalog name
 lookups), so the feasibility sweep, the pick, the ladder and the lookup all matter. A direct
 transcription of the contract into a per-request pass over the whole catalog is correct but several times
-off the pace. Scoring is a bounded log curve on your speedup over the slow baseline: matching the
-reference implementation's speed scores 0.5, going substantially beyond it approaches the 1.0
-ceiling, and failing to beat the slow baseline at all scores 0. `numpy` is available; timing is
-CPU time, so the score is robust to machine load.
+off the pace. `numpy` is available.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Solve independently — prohibited actions (any one => the whole task scores 0)
 - Reading, printing, copying, `cat`/`grep`/`find`-ing, editing, or reproducing ANY verifier /

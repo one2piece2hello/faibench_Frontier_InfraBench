@@ -48,10 +48,15 @@ overlapping, staircase, zero-byte, zero-length, span-all, empty, and beyond-rang
 budgets above and below the peak.
 
 ## Workload shape
-The benchmark scores peak memory for a large plan repeatedly while a scheduler explores eviction
-candidates, and times it; correctness is checked over many diverse plans against an independent
+The benchmark times repeated peak-memory calculations for a large plan while a scheduler explores eviction
+candidates; correctness is checked over many diverse plans against an independent
 in-harness reference. A hidden set covers more cases. No model weights, GPU, or network are involved —
 this is host-side logic (a memory-accounting simulator).
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## Rules
 - Preserve the class/function names, method signatures, and the exact observable behavior described

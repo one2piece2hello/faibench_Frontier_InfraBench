@@ -45,11 +45,15 @@ verifier feeds a fixed, deterministic block and requires the exact reference dot
 ## What is measured
 
 The verifier recompiles your `quants.c`, links the kernel, and times it on many
-random Q5_K×Q8_K blocks, rewarding **wall-clock speedup over the provided slow
-scalar baseline**, on the condition that the deterministic reference dot above is
-reproduced exactly. Bigger, correct speedups score higher. The CPU exposes the
+random Q5_K×Q8_K blocks against the provided slow scalar baseline. Your kernel must
+reproduce the deterministic reference dot above exactly. The CPU exposes the
 usual x86 SIMD extensions (SSE4.2 / AVX / AVX2 / FMA / F16C); a vectorized 5-bit K-quant dot — inject the high-bit plane from `qh`, mask the 4-bit low weights into SIMD lanes, unpack the packed 6-bit scales/mins, fold the min correction through the `bsums`, and fuse a multiply-add accumulate recovers
 most of the headroom. Headroom grows with block count.
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## Rules
 

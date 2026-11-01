@@ -31,6 +31,10 @@ full contract; it is unchanged in this protocol.
 
 ## How you are graded (loop16: iterate in-session, at most 16 self-scored submissions)
 
+Let `s` be your measured speedup over the strong baseline and `r` the calibrated reference
+speedup over that same baseline. A failed validity check, `r <= 1`, or `s <= r` scores 0.
+Otherwise the final reward is `min(1, ln(s/r) / ln(r))`, capped at 1 when `s >= r²`.
+
 This task uses the **loop16 protocol**: in your session you may score the current
 `/app/repo/submission/kv_traffic.py` and get feedback **at most 16 times, at least once — you decide
 when to stop** (you need not use all 16).

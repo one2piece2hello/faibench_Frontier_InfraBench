@@ -21,9 +21,13 @@ The verifier drives `PriorityRequestQueue` via add_request / peek_request / pop_
 - The internal representation is an implementation detail: you may replace it entirely, as long as every public method keeps its signature and the ORDER contract above holds for every possible interleaving of add/peek/pop/remove.
 
 ## Scoring
-Correctness is a hard gate (exact pop-order trace equality over 20 diverse add/pop/remove scenarios vs an independent reference). Once fully correct, the reward rises with the speedup
-of your implementation relative to the reference optimized version (the oracle); matching the
-oracle scores ~1.0 and beating it scores higher. A correct-but-unoptimized submission scores ~0.5.
+Correctness requires exact agreement with the reference pop-order trace across 20 diverse
+add/pop/remove scenarios.
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## 🔁 Iterative submission protocol (this task uses a per-task loop)
 

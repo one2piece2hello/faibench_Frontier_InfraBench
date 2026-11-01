@@ -155,9 +155,13 @@ Contract notes that are easy to break:
 
 ## How you are scored
 
-Your reward is the wall-clock **speedup** of the benchmark workload against the frozen slow
-baseline that ships in this repository, and it is **gated on correctness** — one mismatched
-element scores 0 regardless of speed. The benchmark runs two Winograd blocks: an
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
+
+Correctness is required: one mismatched element scores 0 regardless of speed.
+The benchmark runs two Winograd blocks: an
 `F(4, 3)` block over a `1x20x20x16` input with a `3x3x16x24` filter and `padding=1`, then an
 `F(2, 3)` block over a `1x16x16x24` input with a `3x3x24x16` filter and `padding=1`. That is
 roughly 900k forward-transform multiply-accumulates, 740k transform-domain GEMM

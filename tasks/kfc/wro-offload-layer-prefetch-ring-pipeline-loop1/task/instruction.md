@@ -133,13 +133,9 @@ zero.
 - Correctness is a hard gate: any mismatch against the reference, any mutated
   input, any missing error contract, or any edit outside the scope file scores
   **0**.
-- Subject to that gate, the score is a bounded log curve on the speedup of the whole
-  planner over the frozen slow baseline on the benchmark workload: a correct but
-  unimproved submission scores **0**, matching the reference-grade implementation's
-  speed scores **0.5**, and going substantially beyond it approaches the **1.0**
-  ceiling. Partial progress scores partially — vectorising the chunk table and the
-  link queue while leaving the ring walk and the stall scan in Python gets only a
-  small fraction of the way up the curve.
+- Let `s` be the whole planner's speedup over the frozen slow baseline and `r` the reference
+  planner's speedup over that baseline. The final reward is 0 if any hard check fails, `r <= 1`,
+  or `s <= r`; otherwise it is `min(1, ln(s/r) / ln(r))`. Matching the reference earns 0.
 - The benchmark workload plans **768 layers chunked at 16 KiB (about 150 thousand
   chunks) over a 192-slot ring**, so every per-chunk stage matters and the
   per-layer stages do not.

@@ -11,22 +11,16 @@ The grader then loads the checkpoint your training produced and measures its
 
 ## How you are scored
 
-Scoring is **bounded between 0.0 and 1.0**, and it is measured against **the starting recipe you
-were given**:
+The shipped AdamW recipe is the baseline. Beating that starter is not enough:
+you must beat the reference recipe at the same token budget.
 
-- The provided starter is a **well-tuned AdamW** recipe at this token budget. It is a real,
-  complete, working recipe — and it is the bar. **Submitting it, or anything that does not
-  strictly improve on its held-out `val_bpb`, scores 0.**
-- Beyond that, your score rises **continuously** with how much of the achievable `val_bpb` gap
-  you close. Reaching the quality of a strong reference recipe measured at this same token
-  budget scores **0.5**; pushing further keeps earning more, up to the 1.0 ceiling. Coming
-  close to the starter without passing it earns nothing — you have to actually beat it.
-- Any hard-gate failure — over the parameter cap, a missing checkpoint, byte-identical weights
-  across seeds, a degenerate or forged-loss model, or touching the grader's files — scores
-  **0**, whatever the `val_bpb`.
+For the final score, let `s = baseline_bpb / median_candidate_val_bpb` on the held-out
+split and let `r` be the calibrated reference recipe's ratio at the same budget.
+A failed validity check, an invalid reference (`r <= 1`), or `s <= r` scores 0.
+Otherwise the reward is `min(1, ln(s/r) / ln(r))`: it reaches 1 at `s >= r²`.
 
-So a mediocre-but-safe re-tune of the starter is worth exactly as much as no submission at all.
-The whole game is pushing `val_bpb` as low as you can inside the token budget.
+Examples of invalid runs include exceeding the parameter cap, failing to save a checkpoint,
+producing byte-identical weights across seeds, forging the loss, or touching the grader's files.
 
 ## The budget is TOKENS, not time — read this carefully
 

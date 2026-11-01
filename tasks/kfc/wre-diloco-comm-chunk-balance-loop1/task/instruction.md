@@ -42,7 +42,7 @@ increasing order. Chunk `k` spans `[boundaries[k-1], boundaries[k])` (chunk 0 st
 increasing, every value is in `1..N`, the last value is exactly `N` (all tensors covered), and
 `len(boundaries) <= P`.
 
-**Bottleneck chunk bytes (the score):** the `max` over chunks of each chunk's summed sizes —
+**Bottleneck chunk bytes (the quantity to minimize):** the `max` over chunks of each chunk's summed sizes —
 minimize it.
 
 ### `custom_kernel(data) -> boundaries`
@@ -62,9 +62,10 @@ list that ignores the input fails). An invalid partition scores 0.
 ## Scoring (bottleneck chunk bytes — lower is better)
 
 Once valid, the total bottleneck bytes over the hidden primary suite (the sum of each stream's
-largest-chunk byte total) is measured. The reward is the **oracle's total bottleneck divided by
-yours** — matching the reference balancer scores `1.0`, a larger bottleneck scores below `1.0`, a
-more balanced partition scores above `1.0`. Cutting into equal-count chunks is valid but a chunk
+largest-chunk byte total) is measured. Let `s` be baseline bottleneck bytes divided by your
+bottleneck bytes, and `r` the same ratio for the reference balancer. The final reward is 0 if any
+hard check fails, `r <= 1`, or `s <= r`; otherwise it is `min(1, ln(s/r) / ln(r))`. You must use
+fewer bottleneck bytes than the reference to score. Cutting into equal-count chunks is valid but a chunk
 that happens to hold a huge tensor blows the bottleneck; placing boundaries so the byte totals are
 balanced minimizes the largest chunk. The score is dominated by the largest streams.
 

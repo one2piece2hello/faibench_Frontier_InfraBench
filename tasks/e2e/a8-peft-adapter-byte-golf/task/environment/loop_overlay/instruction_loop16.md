@@ -6,10 +6,11 @@ and read-only) to a new target domain while shipping at most **327,680 bytes** o
 harness loads the base weights itself, hands them to your entry hook with your byte-capped artifact,
 and scores held-out cross-entropy. It is EVAL-ONLY: the harness never re-runs your fine-tune.
 
-Scored on the fraction of the achievable adaptation gain captured on a hidden held-out split:
-`gain_ratio = (base_CE - candidate_CE) / (base_CE - strong_reference_CE)`, fed through a bounded log
-reward (a `gain_ratio` of 1.0 — tying the strong reference — scores 0; the calibrated ceiling scores
-0.5). All of `/app/repo` (peft) + `/app/submission` is editable except the frozen eval surface.
+The held-out quality metric is `s = (base_CE - candidate_CE) / (base_CE - strong_reference_CE)`.
+Let `r` be the calibrated gain ratio of the reference ceiling recipe. A failed validity check,
+`r <= 1`, or `s <= r` scores 0, including a tie with the ceiling recipe. Above it,
+reward is `min(1, ln(s/r) / ln(r))`. All of `/app/repo` (peft) + `/app/submission` is editable
+except the frozen eval surface.
 
 ## Entry contract (start from the shipped files)
 

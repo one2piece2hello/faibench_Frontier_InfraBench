@@ -25,15 +25,14 @@ your process**, the wall-clock time of each attention call. It converts that int
 the GPU's measured peak dense `bfloat16` matrix-multiply throughput that your implementation
 achieves for the arithmetic a correct causal attention must perform, and compares it with a
 **well-tuned baseline** built from the strongest variable-length causal attention kernel this
-environment already provides. Your score is a **bounded value in [0, 1]** that grows with the
-logarithm of your speed-up over that baseline: **merely matching the baseline scores 0** — you have
-to beat it before you score at all — and the score is **capped at 1.0** once your speed-up is large
-enough. Failing any correctness check, or touching the evaluation surface, also scores 0. The exact
-calibration constant behind the curve is part of the evaluation surface and is not disclosed.
+environment already provides. The fraction of peak throughput is a diagnostic, not the reward.
 
-Reaching a passing score is easy — the implementation shipped in
-`/app/repo/submission/varlen_prefill_attn.py` is already correct. Getting close to the hardware's
-peak is very hard.
+Let `s` be your measured speedup over the strong baseline and `r` the calibrated reference
+speedup over that same baseline. A failed validity check, `r <= 1`, or `s <= r` scores 0.
+Otherwise the final reward is `min(1, ln(s/r) / ln(r))`, capped at 1 when `s >= r²`.
+
+The shipped `/app/repo/submission/varlen_prefill_attn.py` is already correct. It still has to
+beat the reference speedup to earn a positive reward.
 
 ## Required API contract (frozen — the verifier calls exactly this)
 

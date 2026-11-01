@@ -77,7 +77,12 @@ Once correct, you are scored on **wall-clock speed** on one large hidden commit 
 requests, a draft width in the low tens, a KV pool of tens of thousands of rows with a few dozen
 channels), so the ragged plan, the compaction and the row movement all matter. A direct transcription
 of the contract into per-request Python loops is correct but roughly an order of magnitude off the
-pace. Reward is the reference runtime divided by yours — faster is better. `numpy` is available.
+pace. `numpy` is available.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Solve independently — prohibited actions (any one => the whole task scores 0)
 - Reading, printing, copying, `cat`/`grep`/`find`-ing, editing, or reproducing ANY verifier /

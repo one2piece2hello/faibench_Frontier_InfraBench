@@ -29,20 +29,16 @@ outside your process**, the wall-clock time of complete traffic steps. It comput
 number of bytes** each step must read and write itself, from the workload definition, so moving
 *more* bytes than necessary can only cost you — the score is not something your code reports.
 
-Your score is that measurement relative to a **well-tuned baseline** built from the best paged-KV
-movement paths this repository already provides, chosen and configured by measurement in advance —
-so a configuration change alone will not beat it. Your score is a **bounded value in [0, 1]** that
-grows with the logarithm of your speed-up over that baseline: **merely matching the baseline scores
-0** — you have to beat it before you score at all — and the score is **capped at 1.0** once your
-speed-up is large enough. Failing any correctness check, or touching the evaluation surface, also
-scores 0. The exact calibration constant behind the curve is part of the evaluation surface and is
-not disclosed. The verifier also reports, per case, what fraction of the GPU's measured peak HBM
-bandwidth you achieved: that fraction is the physical ceiling for this workload, and the baseline is
-nowhere near it.
+The verifier compares your timings to a well-tuned baseline built from the repository's paged-KV
+movement paths. It also reports the fraction of peak HBM bandwidth achieved per case as a
+diagnostic; that fraction is not the reward.
 
-Reaching a passing score is easy — the implementation shipped at
-`/app/repo/submission/kv_traffic.py` is already correct. Getting close to the hardware bound is
-very hard.
+Let `s` be your measured speedup over the strong baseline and `r` the calibrated reference
+speedup over that same baseline. A failed validity check, `r <= 1`, or `s <= r` scores 0.
+Otherwise the final reward is `min(1, ln(s/r) / ln(r))`, capped at 1 when `s >= r²`.
+
+The shipped `/app/repo/submission/kv_traffic.py` is already correct. It still has to beat the
+reference speedup to earn a positive reward.
 
 ## Required API contract (frozen — the verifier calls exactly this)
 

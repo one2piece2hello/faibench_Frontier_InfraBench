@@ -1,18 +1,17 @@
-# Performance Optimization Task
+# Functional Implementation Task
 
 ## Objective
 
 Implement a **group-relative advantage estimation** subsystem used in reinforcement-learning
-post-training, then make it as fast as possible on the benchmark workloads while preserving
-numerical behavior within tolerance.
+post-training, preserving its numerical behavior within tolerance.
 
 The subsystem takes per-sample scalar rewards that are partitioned into **groups** (multiple
 sampled responses share one prompt/group id) and produces, for each sample, an advantage that
 is normalized *relative to its own group*. Two estimators are required (GRPO and RLOO) plus the
 shared group-statistics primitive they build on.
 
-The starting code raises `NotImplementedError` in every function by design — your first job is
-to implement the stated contract so it is **correct**; then optimize it. A submission that
+The starting code raises `NotImplementedError` in every function by design. Implement each one
+to the stated contract. A submission that
 leaves any function unimplemented, or whose outputs do not match the reference within tolerance,
 scores 0.
 
@@ -75,12 +74,10 @@ Your outputs are compared to a held-out reference on hidden workloads with toler
 groups, a single-group batch, sparse rewards, and large batches with many groups. Behavior must
 be deterministic given the inputs.
 
-## Performance
+## Scoring
 
-After correctness passes, the subsystem is timed end-to-end on a large workload (many samples,
-many groups). Reward is the ratio of the reference implementation's time to yours (matching the
-reference = 1.0, faster > 1.0). Correctness is a hard prerequisite: an incorrect submission
-scores 0 regardless of speed.
+The final reward is binary: **1** if every hidden case passes and no hard check fails, **0**
+otherwise. Timing is recorded, but raw speedup does not earn partial or extra credit.
 
 ## Rules
 

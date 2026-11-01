@@ -35,15 +35,16 @@ submission that leaves the function `NotImplementedError`, clips each tensor by 
 instead of the shared global norm, or reports the post-clip norm fails and scores 0.
 
 ## Performance
-After correctness passes, reward is the speedup of your implementation's GPU time relative to the
-reference, measured on a large list of gradient tensors. A naive approach loops over the tensors in
+After correctness passes, the grader measures GPU time on a large list of gradient tensors.
+A naive approach loops over the tensors in
 Python — one reduction per tensor to accumulate the norm, then one multiply per tensor to scale —
 issuing ~2N small kernels; the norm of all tensors and the scaling of all tensors can each be done
 in a single fused vectorized call. The gap grows with the number of tensors `N`.
-Scoring is a bounded log curve on that speedup: reaching the reference-grade
-implementation's speed scores 0.5, and going substantially beyond it approaches the
-1.0 ceiling; failing to beat the slow baseline at all scores 0. Correctness is a hard
-gate — any failing case scores 0 regardless of speed.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Rules
 - Change only `submission/kernel.py`. Implement the complete contract; keep the public signatures.

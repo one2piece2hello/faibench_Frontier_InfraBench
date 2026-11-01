@@ -59,7 +59,7 @@ NOT (offsets[b] < offsets[c] + sizes[c]  and  offsets[c] < offsets[b] + sizes[b]
 Blocks whose lifetimes do **not** overlap may reuse (share) the same bytes — that is exactly
 where the savings come from.
 
-**Arena size (the score):** `max_b (offsets[b] + sizes[b])`. Smaller is better.
+**Arena size (the quantity to minimize):** `max_b (offsets[b] + sizes[b])`. Smaller is better.
 
 ### `custom_kernel(data) -> offsets`
 
@@ -82,11 +82,11 @@ A valid plan is required before the arena is scored.
 ## Scoring (arena size — lower is better)
 
 Once valid, the arena high-water your plan achieves on the hidden primary workload is measured:
-`arena = max_b (offsets[b] + sizes[b])`. Your ratio is the **naive arena divided by your
-arena**, and the score is a bounded log curve on it: matching the reference allocator's arena
-scores `0.5`, a substantially tighter valid packing approaches the `1.0` ceiling, and failing to
-beat the naive private-slab plan at all scores `0`. The score is dominated by the large
-workloads, so a tight plan on a tiny workload cannot offset a wasteful one on a large workload.
+`arena = max_b (offsets[b] + sizes[b])`. Let `s` be the naive arena size divided by yours, and
+`r` the same ratio for the reference allocator. The final reward is 0 if any hard check fails,
+`r <= 1`, or `s <= r`; otherwise it is `min(1, ln(s/r) / ln(r))`. You must use less arena space
+than the reference to score. Large workloads dominate the measured arena size, so a tight plan
+on a tiny workload cannot offset a wasteful one on a large workload.
 The naive plan that gives every block its own private slab (arena = sum of all sizes) is correct
 but leaves most of the reuse on the table.
 

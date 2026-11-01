@@ -61,13 +61,16 @@ unchanged:
   reference within a relative-norm tolerance, over a hidden suite of diverse shapes
   (small, large, rectangular, ragged, non-power-of-two, skinny/wide N, tall K). Every
   output element must decode the correct per-`(group, column)` metadata and place each of
-  the 2 nonzeros at its correct in-group K row. The fraction of shapes that pass is
-  graded; an implementation that is correct only for one specific shape or a fixed
-  sparsity pattern scores partially. Full performance credit requires passing every shape.
-- **Performance** (reward): wall-clock speedup of your implementation over the frozen
+  the 2 nonzeros at its correct in-group K row.
+  Every tested shape must pass; partial correctness earns no reward.
+- **Measured speedup**: wall-clock speedup of your implementation over the frozen
   baseline currently in `sp24mm/matmul.py`, measured on a small-M, large-K/N
-  (weight-heavy) fp16 workload with warmup and repeated timed iterations. Higher is
-  better.
+  (weight-heavy) fp16 workload with warmup and repeated timed iterations.
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## Rules (A-only red line)
 

@@ -35,6 +35,13 @@ strings), `"coef"` and `"rms"` (`float64` arrays of shape `(B,)`) for the chosen
 curve. Inputs must not be mutated. The expected direction is to batch the six
 curve fits across all benchmarks with vectorized array ops.
 
+## Scoring
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
+
 ## Anti-cheat red line (A-only)
 
 Reading or tampering with the verifier/scoring assets, reproducing or importing

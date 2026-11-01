@@ -73,10 +73,10 @@ Contract notes that are easy to break:
 
 ## How you are scored
 
-Your reward is a log-curve function of the wall-clock **speedup** of the benchmark workload
-against the frozen slow baseline that ships in this repository: matching the reference (oracle)
-implementation's speed scores **0.5**, being as far past it again as it is past the baseline caps
-the reward at **1.0**, and merely matching the baseline scores **0.0** (reward range `[0, 1]`).
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 It is **gated on exact correctness** — a single mismatched float scores 0 regardless of speed. The benchmark runs one full policy search on a
 `steps=10` grid (287496 candidates); there is a large amount of headroom, and the headroom
 **grows with the grid size**, so an algorithmically better solution wins by much more than a

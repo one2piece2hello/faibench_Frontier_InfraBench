@@ -99,6 +99,11 @@ blocks per query row varies), half-precision dtypes, and softmax scales. The tim
 workload runs one forward + backward step over a single long-sequence sparsely-
 connected batch.
 
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
+
 ## Rules
 - Preserve the entry point's signature and numerical behavior (within tolerance),
   including the `block_sparse_tensors` allow-set restriction, the grouped-query head

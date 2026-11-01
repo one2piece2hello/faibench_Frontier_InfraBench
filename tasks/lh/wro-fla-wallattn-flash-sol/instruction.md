@@ -63,13 +63,16 @@ available for you to call.
 - **Correctness** (hard gate): the operation's output must match the independent fp32
   reference within a relative-norm tolerance, over a hidden suite of diverse shapes
   (short and long `T`, several non-power-of-two `T`, varying window width, grouped-query
-  head configurations, varying `B`, and both head widths). The fraction of shapes that
-  pass is graded; an implementation correct only for one specific shape (e.g. only
-  full-causal, or only `HQ == H`) scores partially. Full performance credit requires
-  passing every shape.
-- **Performance** (reward): wall-clock speedup of your implementation over the frozen
+  head configurations, varying `B`, and both head widths).
+  Every tested shape must pass; partial correctness earns no reward.
+- **Measured speedup**: wall-clock speedup of your implementation over the frozen
   baseline currently in `fla/ops/wall_attn/parallel.py`, measured on a long-context
-  workload with warmup and repeated timed iterations. Higher is better.
+  workload with warmup and repeated timed iterations.
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## Rules (A-only red line)
 

@@ -14,9 +14,8 @@ make it **fast** while keeping it numerically correct.
 Make the forward pass of the retention subsystem as fast as possible on the benchmark workload,
 without changing its numerical result (within tolerance) or its public contract. A restored,
 production-grade chunked/blocked kernel is dramatically faster than the shipped per-timestep
-scan; matching or beating that is the goal. Reward is the **wall-clock speedup** of your version
-over the shipped slow baseline (correctness is a hard prerequisite: a fast-but-wrong version
-scores 0).
+scan. To earn a positive reward, your implementation must be correct and faster than the
+calibrated reference, not just faster than the shipped slow baseline.
 
 ## Editable scope (out-of-scope edits are rejected)
 ```
@@ -54,9 +53,10 @@ i.e. the causal decay-weighted linear-attention output; equivalently the state r
 ## How you are graded
 - **Correctness gate**: your `chunk_retention` output must match the independent fp32 retention
   reference on randomized inputs within tolerance (`rel_max <= 3e-2`, `rel_l2 <= 1.5e-2`).
-- **Speed**: reward = `baseline_ms / candidate_ms`, the wall-clock speedup of your version over
-  the shipped slow per-timestep baseline (uncapped; higher is better). A version that fails the
-  correctness gate, edits any out-of-scope file, or changes the public signature scores 0.
+- **Speed**: `s = baseline_ms / candidate_ms` is your raw speedup; `r` is the reference
+  implementation's speedup over the same baseline. A failed validity check, `r <= 1`, or
+  `s <= r` gives zero reward. Otherwise the reward is `min(1, ln(s/r) / ln(r))`,
+  capped at 1 when `s >= r²`.
 
 ## Grading integrity (submissions violating this score 0 — academic-integrity clause)
 - The grader, its reference outputs, and all held-out test inputs live outside your workspace.

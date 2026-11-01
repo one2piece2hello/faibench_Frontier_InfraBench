@@ -88,14 +88,16 @@ available for you to call.
   requested — must match an independent fp32 sequential reference of the recurrence
   above within a relative-norm tolerance, over a hidden suite of diverse shapes (short
   and long `T`, a mix of power-of-two and non-power-of-two lengths, several batch sizes
-  and head counts, and both head widths). The fraction of shapes that pass is graded; an
-  implementation correct only for one specific shape (e.g. only power-of-two `T`, or only
-  the benchmark length) scores partially. Full performance credit requires passing every
-  shape.
-- **Performance** (reward): wall-clock speedup of your implementation over the frozen
+  and head counts, and both head widths).
+  Every tested shape must pass; partial correctness earns no reward.
+- **Measured speedup**: wall-clock speedup of your implementation over the frozen
   baseline currently in the three scope files, measured on a single **H20** GPU on a
-  long-sequence bf16 workload with warmup and repeated timed iterations. Higher is
-  better.
+  long-sequence bf16 workload with warmup and repeated timed iterations.
+
+**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
+implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
+or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
+earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
 
 ## Rules (A-only red line)
 

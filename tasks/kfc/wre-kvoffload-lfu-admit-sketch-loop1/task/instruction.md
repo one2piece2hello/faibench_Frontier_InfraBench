@@ -50,12 +50,17 @@ the frequency), forgets the presence exclusion, or returns unsorted/duplicate in
 scores 0.
 
 ## Performance
-After correctness passes, reward is the speedup of your implementation's host wall-clock time
-relative to the reference, measured over many blocks against a fixed sketch. A naive approach loops
+After correctness passes, the grader times your implementation on the host over many blocks
+against a fixed sketch. A naive approach loops
 over each block in Python and takes the per-row minimum one row at a time, doing work that grows as
 `O(N * D)` in the interpreter; hashing all blocks at once and reducing with a single vectorized
 gather + min over the row axis is `O(N * D)` in compiled array code. The gap grows with the number
-of blocks `N`. Matching the reference speed scores 1.0; beating it scores higher.
+of blocks `N`.
+
+Let `s` be the candidate's speedup (baseline time / candidate time) and `r` the reference
+implementation's speedup over the same baseline. A failed correctness or other hard check,
+`r <= 1`, or `s <= r` gives 0. Otherwise the final reward is `min(1, ln(s/r) / ln(r))`:
+matching the reference earns 0 and `s >= r²` earns 1.
 
 ## Rules
 - Change only `submission/kernel.py`. Implement the complete contract; keep the public signatures.

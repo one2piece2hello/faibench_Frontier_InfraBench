@@ -28,10 +28,8 @@ T = solve_tril(A)                                                  # consumer
 ```
 
 produces a transform `T` that matches a held-out reference (an independent PyTorch
-per-chunk inverse) within tolerance on randomized GPU inputs. This is a **graded
-correctness** task: your score is the weighted fraction of hidden cases you pass, so
-partial and progressively more complete implementations earn partial and progressively
-higher credit.
+per-chunk inverse) within tolerance on randomized GPU inputs. This is a correctness-only task;
+passing only some cases earns no partial credit.
 
 The two files are **coupled**: `solve_tril`'s input `A` is exactly `chunk_scaled_dot_kkt_fwd`'s
 output (this is precisely how `delta_rule/wy_fast.py`, `gated_delta_product/chunk.py`, and
@@ -95,8 +93,9 @@ fp32). A fully correct pipeline scores 1.0.
   tolerance scores — you are graded on the output, not the method.
 
 ## How you are graded
-- Reward is the weighted fraction of hidden cases whose transform `T` matches the reference
-  within tolerance. Preserve both public signatures and their return contracts exactly.
+- Final reward is binary: 1 if the submission builds, imports, matches the reference transform `T`
+  within tolerance on every case, and passes all scope and integrity checks; otherwise 0.
+  Preserve both public signatures and their return contracts exactly.
 - `chunk_size == 16` cases exercise mainly the producer (a single `16x16` block; no
   off-diagonal merge). `chunk_size in {32, 64}` cases require the consumer's off-diagonal
   sub-block merge. A fully correct producer + consumer (incl. the gate and `chunk_size in
