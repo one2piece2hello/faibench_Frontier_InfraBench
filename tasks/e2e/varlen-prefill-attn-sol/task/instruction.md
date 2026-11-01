@@ -27,8 +27,9 @@ achieves for the arithmetic a correct causal attention must perform, and compare
 **well-tuned baseline** built from the strongest variable-length causal attention kernel this
 environment already provides. The fraction of peak throughput is a diagnostic, not the reward.
 
-Let `s` be your measured speedup over the strong baseline and `r` the calibrated reference
-speedup over that same baseline. A failed validity check, `r <= 1`, or `s <= r` scores 0.
+For each paired run, take the geometric mean of `baseline time / candidate time` across the
+held-out workload cases. Let `s` be the median of those paired speedups and `r` the calibrated
+reference speedup against the same baseline. A failed validity check, `r <= 1`, or `s <= r` scores 0.
 Otherwise the final reward is `min(1, ln(s/r) / ln(r))`, capped at 1 when `s >= r²`.
 
 The shipped `/app/repo/submission/varlen_prefill_attn.py` is already correct. It still has to
@@ -127,7 +128,11 @@ Solve it yourself. The vLLM sources at `/app/repo`, the public literature on Fla
 variable-length packing / GPU tiling, and your own ideas are all fair game — what is forbidden is
 touching the measurement.
 
-## 提交方式
+## Submission / 提交方式
 
-把改动**留在工作树里**即可 —— 直接编辑允许的文件,不需要 `git commit`
-(判分读工作树;仓库的 HEAD 必须停在初始基线 commit 上)。
+In the default loop16 image, run `bash /opt/loop/submit.sh` once per candidate (1–16 submissions).
+To stop before round 16, run `bash /opt/loop/submit.sh --finalize --reason "..."`; round 16 finalizes automatically.
+Of the candidates that pass the dev checks, the one with the highest public dev throughput (TFLOP/s) is selected for the
+single held-out evaluation. The dev metric ranks candidates; it is not the final reward.
+If you run the base image without the submit helper, the grader uses the final working tree instead.
+请保持 `/app/repo` 的 HEAD 在初始提交，不要 `git commit`。默认镜像须用上述脚本提交；仅基础镜像直接评测最终工作树。

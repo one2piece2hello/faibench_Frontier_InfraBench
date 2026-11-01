@@ -66,8 +66,7 @@ Transformer, GShard, MegaBlocks/dropless MoE, Tutel) are fair game.
 - Train on `/data/datasets/wikitext_bpe8k/train.bin` (flat `uint16`, nanoGPT
   layout). `/data/datasets/wikitext_bpe8k/val.bin` is your **local progress
   monitor** (the WikiText-103 *validation* split); the grader scores on the
-  held-out *test* split, same distribution, so your local `val_bpb` tracks the
-  grader's within a small margin.
+  held-out *test* split. Use local `val_bpb` to track progress, not to predict the final score.
 - Tokenizer: SentencePiece **BPE-8K** at `/data/tokenizers/wikitext_bpe8k.model`
   (`vocab_size = 8192`). `meta.pkl` in the data dir carries `vocab_size`.
 - The grader pins `DATA_PATH` and `TOKENIZER_PATH` itself; they are not taken from
@@ -106,10 +105,8 @@ or forged-loss model scores 0.
 
 ## Rules
 
-- **How you submit:** there is no submit command and no submission budget — edit the
-  allowed files under `/app/submission/` (and `/app/repo` if you like) and **leave your
-  changes in the working tree**. Do not `git commit`: grading diffs your working tree
-  against the baked baseline commit, so the repo HEAD must stay on that initial commit.
+- Edit the allowed files under `/app/submission/` and `/app/repo`. Leave changes uncommitted;
+  keep the repository HEAD at its initial commit. See the submission protocol below.
 - The training seed is fixed by the grader (you cannot seed-shop).
 - You do **not** have internet access; all packages you need are pre-installed.
 - **Do not** read, copy, grep, or edit any grader / held-out / timer file
@@ -123,13 +120,16 @@ or forged-loss model scores 0.
 
 ## How you are graded
 
-Grading is **single-shot**: after you finish, the grader runs your
-`/app/submission/run_training.sh` **once** under its own wall-clock timer, then loads the
-resulting checkpoint and measures held-out `val_bpb`. There is no interactive dev proxy and
-no submission budget — only your final working-tree state is scored.
+In the default loop16 image, run `bash /opt/loop/submit.sh` once per candidate (1–16 submissions).
+To stop before round 16, run `bash /opt/loop/submit.sh --finalize --reason "..."`; round 16 finalizes automatically.
+Of the candidates that pass the dev checks, the one with the lowest public dev `val_bpb` is selected for the
+single held-out evaluation. The dev metric ranks candidates; it is not the final reward.
+If you run the base image without the submit helper, the grader uses the final working tree instead.
 
-You can still monitor progress yourself. `val.bin` (the public validation split) is your
-local `val_bpb` proxy and tracks the grader within a small margin. At a fixed capacity
+The final grader runs `/app/submission/run_training.sh` under its own wall-clock budget,
+then loads the resulting checkpoint and measures held-out `val_bpb`.
+
+At a fixed capacity
 your real lever is **throughput** — how many optimizer steps you fit in the fixed
 wall-clock budget — so watch tokens/sec as the primary signal that a
 dispatch/precision/batching change made training faster, and use local `val_bpb` only for
@@ -141,8 +141,7 @@ split) — do not overfit it.
 ### 🔴 Red line (hard — ANY one ⇒ the whole task scores 0)
 
 1. Do **NOT deliberately** read/`cat`/`grep`/`find`/edit ANY verifier / timing / scoring
-   / hidden-test / held-out file or dir, wherever it lives. Leaving your edits in the
-   working tree is the only submission — do not run or reverse-engineer the verifier.
+   / hidden-test / held-out file or dir, wherever it lives.
 2. Do **NOT** run the grader directly or reproduce/reverse-engineer it.
 3. Do **NOT** search for, print, or infer the held-out corpus, the grader's seed, the
    parameter-floor value, the wall-clock budget value, the metric thresholds, or the

@@ -85,9 +85,8 @@ fp32). A fully correct pipeline scores 1.0.
 ## What is provided
 - `/app/repo` — the full repository tree at the frozen baseline, importable at that path
   (put first on `sys.path`). The two scope files ship hollowed.
-- A public smoke you can run: `bash tests/test.sh` (drives the scope and prints a JSON
-  verdict). The hidden grading suite uses the same contract with held-out inputs (varied
-  `B, T, H, D`, `chunk_size in {16,32,64}`, gated vs ungated).
+- For local checks, use your own inputs to exercise the public contract (vary `B, T, H, D`,
+  chunk size, and gated versus ungated operation). Official grading is separate; do not run the verifier.
 - The Triton kernels the pristine implementation used are a reasonable target, but ANY
   implementation (Triton or a correct pure-PyTorch one) that meets the contract and
   tolerance scores — you are graded on the output, not the method.

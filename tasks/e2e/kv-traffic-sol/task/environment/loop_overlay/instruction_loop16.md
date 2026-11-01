@@ -31,8 +31,9 @@ full contract; it is unchanged in this protocol.
 
 ## How you are graded (loop16: iterate in-session, at most 16 self-scored submissions)
 
-Let `s` be your measured speedup over the strong baseline and `r` the calibrated reference
-speedup over that same baseline. A failed validity check, `r <= 1`, or `s <= r` scores 0.
+For each paired run, take the geometric mean of `baseline time / candidate time` across the
+held-out workload cases. Let `s` be the median of those paired speedups and `r` the calibrated
+reference speedup against the same baseline. A failed validity check, `r <= 1`, or `s <= r` scores 0.
 Otherwise the final reward is `min(1, ln(s/r) / ln(r))`, capped at 1 when `s >= r²`.
 
 This task uses the **loop16 protocol**: in your session you may score the current
@@ -58,16 +59,15 @@ the hidden baseline), so it rises with engine throughput but does not equal the 
 it for **direction** only; do not overfit to the public shapes.
 
 ### 2. Finalize
-When satisfied (or at the 16th round, which auto-finalizes) run
+To stop after 1–15 submissions, run the command below. Round 16 finalizes automatically.
 
 ```
 bash /opt/loop/submit.sh --finalize --reason "<one sentence on why you are stopping>"
 ```
 
-`--reason` is mandatory and audited. The graded submission is your **best** correctness-passing round
-(best-of-k, chosen by dev bandwidth and planted into `/app/repo` for grading; HEAD stays at the baked
-baseline commit). A justified stop at k=1 scores the same as using all 16; there is no minimum and no
-"keep going until N rounds without gain" rule.
+Give a `--reason` when finalizing early. Among rounds that pass the dev checks, the one with
+the highest dev bandwidth is selected for the held-out evaluation. There is no reward for using
+more rounds; you may stop after the first submission.
 
 ## Hard red line (any one of these makes the whole task score 0)
 

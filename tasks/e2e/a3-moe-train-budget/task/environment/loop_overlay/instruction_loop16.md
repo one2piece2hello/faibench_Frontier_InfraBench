@@ -52,20 +52,19 @@ budget.
 🔴 **That dev `val_bpb` is a PUBLIC proxy, not your graded score.** The overlay contains NO held-out
 corpus and NO calibrated anchor. Unlike some siblings, this task's budget is WALL-CLOCK, so the dev
 `val_bpb` depends on both your recipe AND this node's speed and is only a COARSE **direction** signal
-(a more efficient recipe should reach a lower `val_bpb` in the short dev budget). The graded run trains
-at the FULL budget on the HIDDEN split with the calibrated anchor. Do not overfit to the dev shard.
+(a more efficient recipe should reach a lower `val_bpb` in the short dev budget). The graded run trains at the full wall-clock
+budget and scores the resulting checkpoint on the held-out split. Do not overfit to the dev shard.
 
 ### 2. Finalize
-When satisfied (or at the 16th round, which auto-finalizes) run
+To stop after 1–15 submissions, run the command below. Round 16 finalizes automatically.
 
 ```
 bash /opt/loop/submit.sh --finalize --reason "<one sentence on why you are stopping>"
 ```
 
-`--reason` is mandatory and audited. The graded submission is your **best** correctness-passing round
-(best-of-k, chosen by dev `val_bpb` and planted for grading; `/app/repo` HEAD stays at the baked
-baseline commit). A justified stop at k=1 scores the same as using all 16; there is no minimum and no
-"keep going until N rounds without gain" rule.
+Give a `--reason` when finalizing early. Among rounds that pass the dev checks, the one with
+the lowest dev `val_bpb` is selected for the held-out evaluation. There is no reward for using
+more rounds; you may stop after the first submission.
 
 ## Red line (any one makes the whole task score 0)
 

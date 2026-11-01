@@ -40,13 +40,13 @@ The grader:
    `build_adapted_model(...)`, and measures **your** model's cross-entropy on that same
    held-out split (median of three shifted passes, fp32 cross-entropy);
 3. scores you on **how much of the achievable adaptation gain you captured**, relative to
-   a strong reference recipe that was tuned under the *same* byte budget:
+   a strong baseline adapter trained under the *same* byte budget:
 
    ```
-   gain_ratio = (base_CE - your_CE) / (base_CE - strong_reference_CE)
+   gain_ratio = (base_CE - your_CE) / (base_CE - strong_baseline_CE)
    ```
 
-   `0.0` = no better than the frozen base · `1.0` = matched the strong reference.
+   `0.0` means the adapter matches the frozen base; `1.0` means it matches the strong baseline.
 
    Your **reward is bounded to `[0.0, 1.0]`** and grows *logarithmically* in that ratio:
 
@@ -54,12 +54,10 @@ The grader:
    reward = min(1.0, ln(gain_ratio / REF) / ln(REF))   if gain_ratio > REF   else 0.0
    ```
 
-   where `REF` is a frozen constant **calibrated above 1.0** from a demonstrated in-budget
-   ceiling recipe. So a gain ratio **at or below `REF` scores exactly `0`** — tying the strong
-   reference is worth nothing, and neither is reaching the calibrated ceiling itself; you must
-   **beat** `REF`. `0.5` is reached at `REF^1.5`, and the reward saturates at `1.0` from `REF^2`
-   onward. Lower held-out CE is always better, and the only way to move the reward is to push it
-   down.
+   `REF` is the reference recipe's calibrated gain ratio at the same byte budget. If the
+   calibration is invalid (`REF <= 1`) or any validity check fails, the reward is zero.
+   Matching the strong baseline (`gain_ratio = 1`) or the reference (`gain_ratio = REF`)
+   also earns zero. Half credit requires `gain_ratio = REF^1.5`; full credit starts at `REF^2`.
 
 Reaching a small positive gain ratio is easy: the provided starter recipe trains and submits a
 valid adapter as-is — but a ratio at or under `REF` still scores **0**. Beating the reference is
@@ -108,8 +106,7 @@ you are graded on the result, not on novelty).
   digest-checked, so do not modify it).
 * `/data/datasets/a8_syscode/train.txt` — your training corpus.
 * `/data/datasets/a8_syscode/val.txt` — a **local** progress monitor from the same
-  distribution. The graded split is disjoint from both files; your local number tracks the
-  graded one within a small margin.
+  distribution. Use it to compare adapters; the held-out evaluation uses neither public file.
 * `/app/submission/train_adapter.py` — a working but deliberately unambitious starter
   (rank-1 bf16 LoRA on two projections). Run it, beat it.
 * `/app/submission/adapter_entry.py` — a reference loader for the starter's artifact
@@ -122,10 +119,6 @@ the budget is spent → retrain.
 
 ## Rules (violating any of these scores the whole task 0)
 
-* **Submission:** this package is graded in a **single pass** — one adapter artifact is graded.
-  There is no in-session submit command and no multi-round budget in this image, so iterate
-  locally (train → check `adapter.bin`'s size and your local val CE → retrain) and leave your
-  final `adapter.bin` + `adapter_entry.py` in place when you stop.
 * Do **not** read, `cat`, `grep`, `find`, copy or edit any grader / hidden-eval /
   frozen-surface file, and do not try to infer the held-out split, the thresholds, or the
   reference recipe's numbers.
@@ -135,7 +128,11 @@ the budget is spent → retrain.
 * Solve the task yourself; consulting public documentation and literature is expected and
   allowed.
 
-## 提交方式
+## Submission / 提交方式
 
-把改动**留在工作树里**即可 —— 直接编辑允许的文件,不需要 `git commit`
-(判分读工作树;仓库的 HEAD 必须停在初始基线 commit 上)。
+In the default loop16 image, run `bash /opt/loop/submit.sh` once per candidate (1–16 submissions).
+To stop before round 16, run `bash /opt/loop/submit.sh --finalize --reason "..."`; round 16 finalizes automatically.
+The selection signal for passing rounds is public dev CE reduction (higher is better). Only the
+selected adapter is evaluated on the held-out corpus; dev gain is not the final reward.
+If you run the base image without the submit helper, the grader uses the final working tree instead.
+请将适配器文件放在 `/app/submission/`，不要 `git commit`。默认镜像须用上述脚本提交；仅基础镜像直接评测最终工作树。

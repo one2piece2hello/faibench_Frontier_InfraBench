@@ -39,10 +39,8 @@ This is what makes this task different from a throughput task:
 ## Why this is hard
 
 The starting recipe is already a **well-tuned AdamW baseline** (tuned peak LR, warmup +
-trapezoidal decay, gradient clipping, a batch size chosen at this token budget). The shallow
-configuration wins are already taken: sweeping the batch size or the learning rate around this
-point does **not** help — the reference was selected as the best of such a sweep. To beat it
-you need to change **what the training algorithm actually is**, for example:
+trapezoidal decay, gradient clipping, a batch size chosen at this token budget). The starter already includes the easy configuration wins.
+To beat the reference, consider changes to the training algorithm, for example:
 
 - **the optimizer / update rule** — e.g. spectral / orthogonalized updates for the hidden
   weight matrices (the `Muon` family), second-order-flavoured preconditioning, per-layer
@@ -58,8 +56,8 @@ Public references are fair game: the nanoGPT repo, the
 [modded-nanogpt speedrun](https://github.com/KellerJordan/modded-nanogpt) and its record
 history, the [Muon writeup](https://kellerjordan.github.io/posts/muon/), and the general
 literature on optimizers, architectures and training schedules. **What is protected is the
-grader's measurement, not the method** — reproducing a known good recipe is expected to score
-well, and pushing past it is what earns a high score.
+grader's measurement, not the method**. You may build on known techniques; your reward depends on
+whether the resulting recipe beats the calibrated reference.
 
 ## Data
 
@@ -67,8 +65,7 @@ well, and pushing past it is what earns a high score.
   layout). In your own session `/data/datasets/wikitext_bpe8k/train.bin` is available so you
   can develop and iterate; at scoring `DATA_PATH` points at the budgeted shard instead.
 - `/data/datasets/wikitext_bpe8k/val.bin` is your **local progress monitor** (the WikiText-103
-  *validation* split). The grader scores on the held-out *test* split — same distribution, so
-  your local measurement tracks the grader's within a small margin.
+  *validation* split). Use it to compare recipes; final evaluation uses a separate, held-out *test* split.
 - Tokenizer: SentencePiece **BPE-8K** at `/data/tokenizers/wikitext_bpe8k.model`
   (`vocab_size = 8192`).
 - The corpus bytes are checksum-pinned by the grader, and the scored shard is cut from them.
@@ -104,7 +101,7 @@ functions** in `/app/submission/train_gpt.py`:
    - `model(input_ids, target_ids)` → a **scalar** loss equal (within a small tolerance) to
      `F.cross_entropy(logits.reshape(-1, V), target_ids.reshape(-1))` on those same logits.
 
-A working starting `train_gpt.py` (the tuned AdamW reference on nanoGPT's model, implementing
+A working starting `train_gpt.py` (the AdamW baseline on nanoGPT's model, implementing
 both functions) is provided — it is a starting point, **not** a contract. You may replace all
 of it.
 
@@ -132,11 +129,6 @@ of it.
 
 ## Rules
 
-- **Submission:** this is the **single-shot** form of the task — one recipe is graded in a single
-  pass, with no in-session submit command and no multi-round budget. Iterate locally and leave
-  your final recipe in place when you stop. (This package also ships a 16-round loop16 form,
-  built from `environment/Dockerfile.loop16`; that form has its own instruction with a
-  1-to-16 submission budget and is the one `task.toml`'s `docker_image` points at.)
 - **Do not** read, copy, grep, or edit any grader / held-out / timer file (`/tests/*`); do
   **not** disable or tamper with the grader's token counter or wall-clock guard; do **not**
   try to read the held-out corpus or infer the reference score. The grader fingerprints its own
@@ -144,7 +136,11 @@ of it.
   training literature is explicitly allowed — see above.)
 - Solve this independently. Everything needed at scoring must persist under `/app/submission/`.
 
-## 提交方式
+## Submission / 提交方式
 
-把改动**留在工作树里**即可 —— 直接编辑允许的文件,不需要 `git commit`
-(判分读工作树;仓库的 HEAD 必须停在初始基线 commit 上)。
+In the default loop16 image, run `bash /opt/loop/submit.sh` once per candidate (1–16 submissions).
+To stop before round 16, run `bash /opt/loop/submit.sh --finalize --reason "..."`; round 16 finalizes automatically.
+Of the candidates that pass the dev checks, the one with the lowest public dev `val_bpb` is selected for the
+single held-out evaluation. The dev metric ranks candidates; it is not the final reward.
+If you run the base image without the submit helper, the grader uses the final working tree instead.
+请保持 `/app/repo` 的 HEAD 在初始提交，不要 `git commit`。默认镜像须用上述脚本提交；仅基础镜像直接评测最终工作树。

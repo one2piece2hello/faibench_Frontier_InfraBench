@@ -6,8 +6,8 @@ and read-only) to a new target domain while shipping at most **327,680 bytes** o
 harness loads the base weights itself, hands them to your entry hook with your byte-capped artifact,
 and scores held-out cross-entropy. It is EVAL-ONLY: the harness never re-runs your fine-tune.
 
-The held-out quality metric is `s = (base_CE - candidate_CE) / (base_CE - strong_reference_CE)`.
-Let `r` be the calibrated gain ratio of the reference ceiling recipe. A failed validity check,
+The held-out quality metric is `s = (base_CE - candidate_CE) / (base_CE - strong_baseline_CE)`.
+Let `r` be the calibrated gain ratio of the reference recipe under the same byte budget. A failed validity check,
 `r <= 1`, or `s <= r` scores 0, including a tie with the ceiling recipe. Above it,
 reward is `min(1, ln(s/r) / ln(r))`. All of `/app/repo` (peft) + `/app/submission` is editable
 except the frozen eval surface.
@@ -48,16 +48,15 @@ absolute number is not the graded reward, and bytes stashed outside `adapter.bin
 that pass the dev byte gate can still fail the grade's sweep. Do not overfit to the public corpus.
 
 ### 2. Finalize
-When satisfied (or at the 16th round, which auto-finalizes) run
+To stop after 1–15 submissions, run the command below. Round 16 finalizes automatically.
 
 ```
 bash /opt/loop/submit.sh --finalize --reason "<one sentence on why you are stopping>"
 ```
 
-`--reason` is mandatory and audited. The graded submission is your **best** correctness-passing round
-(best-of-k, chosen by dev gain and planted for grading; `/app/repo` HEAD stays at the baked baseline
-commit). A justified stop at k=1 scores the same as using all 16; there is no minimum and no "keep
-going until N rounds without gain" rule.
+Give a `--reason` when finalizing early. The selection signal for passing rounds is public dev
+adaptation gain (higher is better); the selected adapter goes to the held-out evaluation.
+There is no reward for using more rounds. You may stop after the first submission.
 
 ## Red line (any one makes the whole task score 0)
 

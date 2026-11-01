@@ -103,6 +103,12 @@ submitted diff must contain only product-code changes.
 
 ## How this task is scored — ONE single submission (READ CAREFULLY)
 
+The grader compares the CPU instructions executed by your implementation with the baseline
+instruction count, not elapsed time.
+Let `s` be the resulting improvement ratio (baseline / candidate) and `r` the reference
+implementation's ratio against the same baseline. A failed validity check, `r <= 1`, or
+`s <= r` gives zero reward. Otherwise the reward is `min(1, ln(s/r) / ln(r))`.
+
 You get **exactly one** submission. There is no iterative loop, no budget of
 retries, and no per-round feedback to improve against: the moment you submit, the
 task is over.
@@ -118,10 +124,8 @@ task is over.
    bash /opt/loop/submit.sh
    ```
 
-3. **Submitting ends the task.** That single call scores the current state of
-   `/app/repo`, records it as your final answer, and finalizes immediately. You
-   will not get a second attempt, and you will not get feedback you could iterate
-   on. A second call to `submit.sh` is refused.
+3. **Submitting ends the task.** The harness records your submission and finalizes
+   automatically. Later calls do not score new edits.
 
 Because there is no second chance, spend your effort *before* the submission:
 convince yourself the contract holds on every case you can think of (the shapes,
@@ -156,5 +160,5 @@ Stay inside `/app/repo` and scratch directories you create yourself.
 
 ## 提交方式
 
-本题只有**一次**评分提交(kfc 全子集单次)。改完后运行一次 `bash /opt/loop/submit.sh`:它给当前 `/app/repo` 评分并**立即定稿**(无需再单独调 `--finalize`,也没有第二次机会 —— 再次调用只会重新定稿同一份已记录的最佳快照,不给新改动评分)。请先用你自己的脚本充分自测再提交。
+本题只允许提交一次。先用自己的脚本自测，再运行 `bash /opt/loop/submit.sh`。提交记录成功后会自动定稿，无需另调 `--finalize`。最终奖励由会话结束后的评测器给出；再次调用提交命令不会给新的改动评分。
 改动留在工作树里,不需要 `git commit`(判分读工作树,仓库 HEAD 必须停在初始基线 commit 上)。

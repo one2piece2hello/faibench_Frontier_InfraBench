@@ -18,7 +18,7 @@ modify vLLM source.
 Your score is a **bounded** function of your serving **speedup** over that baseline. Let
 
 ```
-speedup = median over the hidden workloads of ( baseline_time / your_time )
+speedup = median over the held-out concurrent-burst workloads of ( baseline_time / your_time )
 ```
 
 measured with paired baseline/candidate runs (the baseline is measured twice, before and
@@ -42,16 +42,17 @@ together, in several mixes and at several burst widths). Your optimization must 
 **whole mix** — a single knob that helps one request shape while hurting another will not move the
 median.
 
-**What is gated but not timed.** Sequential single-request latency is also measured, and your
+**Timing used only as a gate.** Sequential single-request latency is also measured, and your
 server must not make it materially worse than the baseline's. You cannot win the bursts by
-starving single requests: a single-request latency regression scores the whole task `0.0`.
+starving single requests: failing the latency gate scores the whole task `0.0`.
 
 ## How many times you may submit
 
-This package is graded in a **single pass**: there is no in-session submit command and no
-multi-round budget in this image. Leave your final implementation in the working tree and the
-verifier scores it once — so self-test with your own scripts until you are confident before you
-stop. (See “提交方式” at the end for the exact submission contract.)
+In the default loop16 image, run `bash /opt/loop/submit.sh` once per candidate (1–16 submissions).
+To stop before round 16, run `bash /opt/loop/submit.sh --finalize --reason "..."`; round 16 finalizes automatically.
+Of the candidates that pass the dev checks, the one with the highest public single-request throughput is selected for the
+single held-out evaluation. The dev metric ranks candidates; it is not the final reward.
+If you run the base image without the submit helper, the grader uses the final working tree instead.
 
 ## Correctness gate (runs before speed)
 
@@ -128,5 +129,4 @@ time must persist under `/app/submission/`.
 
 ## 提交方式
 
-把改动**留在工作树里**即可 —— 直接编辑允许的文件,不需要 `git commit`
-(判分读工作树;仓库的 HEAD 必须停在初始基线 commit 上)。
+请保持 `/app/repo` 的 HEAD 在初始提交，不要 `git commit`。默认镜像用 `bash /opt/loop/submit.sh` 提交 1–16 次；仅基础镜像直接评测最终工作树。

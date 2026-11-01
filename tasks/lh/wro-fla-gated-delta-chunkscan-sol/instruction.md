@@ -94,10 +94,11 @@ available for you to call.
   baseline currently in the three scope files, measured on a single **H20** GPU on a
   long-sequence bf16 workload with warmup and repeated timed iterations.
 
-**Final reward.** Let `s` be the candidate's measured speedup over the baseline and `r` the reference
-implementation's speedup over that same baseline. A failed correctness or validity check, `r <= 1`,
-or `s <= r` gives 0. Otherwise the reward is `min(1, ln(s/r) / ln(r))`: beating the reference
-earns credit, and `s >= r²` earns 1. Development speedup is feedback, not the final reward.
+**Final reward.** Let `s` be the baseline time divided by the candidate time on the final workload;
+`r` is the calibrated speedup of the reference implementation over that same baseline.
+Failing any required check, including correctness, earns 0. Even a valid run earns 0 if `r <= 1`
+or `s <= r`. Only when you beat a valid reference does the log curve apply: `min(1, ln(s/r) / ln(r))`.
+The reward reaches 1 at `s >= r²`.
 
 ## Rules (A-only red line)
 
@@ -144,11 +145,10 @@ enough.
 1. **Edit** `/app/repo/fla/ops/gated_delta_rule/chunk.py`, `/app/repo/fla/ops/gated_delta_rule/chunk_fwd.py`, and/or `/app/repo/fla/ops/gated_delta_rule/gate.py` — apply ONE concrete change based on your current
    hypothesis (round 1: based on reading the baseline code).
 2. **Submit** by running `bash /opt/loop/submit.sh` **once** — it returns
-   sanitized correctness + `dev_speedup` + `best_so_far` + `remaining` +
-   `finalize_allowed` synchronously.
-3. **Read the feedback in full.** If correctness FAIL, the named failing
-   invariant is your fix target. If PASS, `dev_speedup` vs `best_so_far`
-   tells you whether this round improved.
+   development feedback, including `dev_speedup`, `dev_reward`, `best_so_far` and the remaining budget.
+3. **Read the feedback.** If the submission fails a development check, use the reported reason
+   to guide your next edit. Otherwise compare `dev_speedup` across rounds; `best_so_far`
+   identifies the submission currently retained by the development scorer.
 4. **Analyze in writing** — (a) what the feedback told you, (b) *why* this
    round's change had that effect (mechanistic reasoning), (c) *what specific
    single change* the next round will try.
@@ -173,9 +173,9 @@ Two ways to end:
   `bash /opt/loop/submit.sh --finalize --reason "<one concrete sentence on
   why you are stopping>"` — the reason is recorded and audited.
 
-Early exit is a feature: you keep the best of your submissions, and a
-*justified* stop scores exactly the same as burning all 16. You decide when to
-stop; there is no minimum submission count.
+There is no penalty for stopping after one or more submissions. Of the submissions that pass
+all development checks, the harness selects one with the highest `dev_reward` for final grading.
+Further rounds may change which candidate is selected; the development score is not the final reward.
 
 ### 3. 🔴 Red line (hard — ANY one of these ⇒ the whole task scores 0 in audit)
 

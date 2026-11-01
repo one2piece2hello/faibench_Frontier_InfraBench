@@ -55,16 +55,15 @@ number for **direction** (did the server get faster and still serve correctly?) 
 outputs identical to the baseline.
 
 ### 2. Finalize
-When satisfied (or at the 16th round, which auto-finalizes) run
+To stop after 1–15 submissions, run the command below. Round 16 finalizes automatically.
 
 ```
 bash /opt/loop/submit.sh --finalize --reason "<one sentence on why you are stopping>"
 ```
 
-`--reason` is mandatory and audited. The graded submission is your **best** server-passing round
-(best-of-k, chosen by dev throughput and planted for grading; `/app/repo` HEAD stays at the baked
-baseline commit). A justified stop at k=1 scores the same as using all 16; there is no minimum and no
-"keep going until N rounds without gain" rule.
+Give a `--reason` when finalizing early. Among rounds that pass the dev checks, the one with
+the highest public single-request throughput is selected for the held-out evaluation. There is no reward for using
+more rounds; you may stop after the first submission.
 
 ## Constraints & red line (any one makes the whole task score 0)
 

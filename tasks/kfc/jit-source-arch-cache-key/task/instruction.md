@@ -105,31 +105,29 @@ final verification runs additional trusted and hidden workloads.
 
 ## How this task is scored — ONE single submission (READ CAREFULLY)
 
+The grader counts distinct cache keys. Equivalent spellings may share a key;
+using the same key for semantically different requests fails correctness.
+Let `s` be the resulting improvement ratio (baseline / candidate) and `r` the reference
+implementation's ratio against the same baseline. A failed validity check, `r <= 1`, or
+`s <= r` gives zero reward. Otherwise the reward is `min(1, ln(s/r) / ln(r))`.
+
 You get **exactly one** submission. There is no iterative loop, no budget of
 retries, and no per-round feedback to improve against: the moment you submit, the
 task is over.
 
-1. Read and profile the current implementation in `/app/repo/identity_key.py`, work out
-   what is slow, and make it faster — taking as long as you need. Test your work
-   yourself as much as you like *before* submitting: write your own scratch
-   benchmarks and your own correctness checks in a scratch directory you create.
-2. When — and only when — you are confident the solution is both correct and as
-   fast as you can make it, submit it **once**:
+1. Compare the keys emitted by `/app/repo/identity_key.py` for equivalent spellings and
+   for genuinely different specs. Use inputs and scratch checks of your own before submitting.
+2. When you are confident the candidate safely removes redundant identities, submit **once**:
 
    ```
    bash /opt/loop/submit.sh
    ```
 
-3. **Submitting ends the task.** That single call scores the current state of
-   `/app/repo`, records it as your final answer, and finalizes immediately. You
-   will not get a second attempt, and you will not get feedback you could iterate
-   on. A second call to `submit.sh` is refused.
+3. **Submitting ends the task.** The harness records your submission and finalizes
+   automatically. Later calls do not score new edits.
 
-Because there is no second chance, spend your effort *before* the submission:
-convince yourself the contract holds on every case you can think of (the shapes,
-dtypes, boundary and error cases described above), and verify your own timing
-shows a real improvement over the shipped implementation. A fast but incorrect
-submission scores zero, and there is no round in which to repair it.
+Check the behavioral and error contracts before submitting. Fewer keys are only an improvement
+when they represent the same builds; an incorrect collision earns zero.
 
 The grade is produced by a full, trusted end-of-session verifier over more
 workloads than anything you can see, so make the one submission you have a
@@ -158,5 +156,5 @@ Stay inside `/app/repo` and scratch directories you create yourself.
 
 ## 提交方式
 
-本题只有**一次**评分提交(kfc 全子集单次)。改完后运行一次 `bash /opt/loop/submit.sh`:它给当前 `/app/repo` 评分并**立即定稿**(无需再单独调 `--finalize`,也没有第二次机会 —— 再次调用只会重新定稿同一份已记录的最佳快照,不给新改动评分)。请先用你自己的脚本充分自测再提交。
+本题只允许提交一次。先用自己的脚本自测，再运行 `bash /opt/loop/submit.sh`。提交记录成功后会自动定稿，无需另调 `--finalize`。最终奖励由会话结束后的评测器给出；再次调用提交命令不会给新的改动评分。
 改动留在工作树里,不需要 `git commit`(判分读工作树,仓库 HEAD 必须停在初始基线 commit 上)。

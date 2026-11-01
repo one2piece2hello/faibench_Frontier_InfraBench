@@ -53,7 +53,7 @@ load_scoring_pipeline_for_verification(device) -> 对象，具备
 ## 数据
 
 `/data/eval_harness/dev_samples.jsonl` 是与留出集**同分布但不相交**的开发集（同一 schema），用来自测正确性
-与自测速度。你在 dev 上的表现是可靠代理，但绝不是被评分的那批记录；留出集你看不到。
+与自测速度。公开记录只用于比较方案；正式评分使用独立的留出记录和强基线。
 
 ## 规则
 
@@ -68,13 +68,14 @@ load_scoring_pipeline_for_verification(device) -> 对象，具备
 
 ## How you are graded
 
-Grading is **single-shot**: after you finish, the grader loads the
-`load_scoring_pipeline_for_verification` you left under `/app/submission/`, feeds it its own
-held-out records, times it against a stronger baseline (ABBA-paired, as described in the entry
-contract above), and recomputes every per-sample score with an independent reference. There is no
-interactive dev-feedback loop and no submission budget — only your final working-tree state is
-scored, so **leave your changes in the working tree** and do not `git commit` (grading diffs the
-working tree against the baked baseline commit, so the repo HEAD must stay on that initial commit).
+In the default loop16 image, run `bash /opt/loop/submit.sh` once per candidate (1–16 submissions).
+To stop before round 16, run `bash /opt/loop/submit.sh --finalize --reason "..."`; round 16 finalizes automatically.
+Among candidates that pass the dev checks, the one with the highest public dev speedup against the
+naive template goes to final evaluation. The grader checks its per-sample outputs on held-out records
+and times it against the **strong** baseline. The public speedup is not the reward.
+
+If you run the base image without the submit helper, the grader uses the final working tree instead.
+Leave edits uncommitted and keep `/app/repo` at its initial commit.
 
 Start from the shipped `scoring_pipeline_template.py` — a correct-but-slow row-by-row loop that
 passes the consistency gate. Copy it to `/app/submission/scoring_pipeline.py` and optimise; you may
@@ -94,7 +95,7 @@ literature and your own ideas are all fair game — what is forbidden is touchin
 
 The scoring machinery is protected and off-limits. Solve this task **independently**: rely ONLY on
 the code in `/app/repo`, the public dev split under `/data/eval_harness`, and your own knowledge and
-reasoning. Leaving your edits in the working tree is the only submission.
+reasoning.
 
 1. Do **not** deliberately `cat`, `open`, `less`, `head`/`tail`, `grep`, `find`, read or edit ANY
    verifier / correctness / timing / scoring / hidden-test / held-out file or directory, wherever it

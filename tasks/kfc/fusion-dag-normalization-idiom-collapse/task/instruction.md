@@ -115,6 +115,12 @@ diff must contain only product-code changes.
 
 ## How this task is scored — ONE single graded submission (READ CAREFULLY)
 
+The grader counts operations in the output graph and compares that count with the baseline
+output.
+Let `s` be the resulting improvement ratio (baseline / candidate) and `r` the reference
+implementation's ratio against the same baseline. A failed validity check, `r <= 1`, or
+`s <= r` gives zero reward. Otherwise the reward is `min(1, ln(s/r) / ln(r))`.
+
 You get **exactly one** submission. There is no iterative loop, no dev feedback
 round, and no second chance.
 
@@ -123,29 +129,26 @@ round, and no second chance.
 2. Self-test as much as you like **using your own scratch scripts** (write them
    outside the product file, e.g. under `/tmp`), because you will get no feedback
    from the grader before your score is fixed.
-3. When — and only when — you are confident the implementation is both correct and
-   faster, submit **once**:
+3. Once your pass preserves the result and reduces the output graph's operation count,
+   submit **once**:
 
    ```
    bash /opt/loop/submit.sh
    ```
 
-**Submitting ends the task.** The moment `submit.sh` runs, your submission is
-recorded and graded; the run is over. A second call to `submit.sh` is refused and
-exits non-zero, and you will not receive an iteration signal you could act on. So
-do all of your thinking, reading and self-testing **before** you submit — a
-half-finished idea submitted early cannot be improved afterwards.
+**Submitting ends the task.** Once the submission is recorded, the harness finalizes
+automatically. Later calls do not score new edits, so finish your own checks first.
 
 Your reward comes from a full, trusted end-of-session verifier over the whole
 correctness suite plus the performance measurement, so keep your submission
 genuinely correct: **any** failing correctness case scores the whole task `0`,
-regardless of how fast it is.
+regardless of how compact the output graph is.
 
 **🎓 Explain your work.** Before you edit, state your approach: what in the
 current code path is doing redundant work, and what you will change. After you
 edit and before you submit, give a short, concrete, step-by-step explanation of
-*why* your change is faster in terms of the actual code path, and how you
-convinced yourself it is still correct. Write it for a beginner reader.
+which operations your pass removes or fuses, and how you checked that the resulting graph
+remains equivalent. Write it for a beginner reader.
 
 ## 🔴 Red line (hard — ANY one of these makes the whole task score 0)
 
@@ -172,5 +175,5 @@ before your single submission — rely on your own reasoning and self-tests.
 
 ## 提交方式
 
-本题只有**一次**评分提交(kfc 全子集单次)。改完后运行一次 `bash /opt/loop/submit.sh`:它给当前 `/app/repo` 评分并**立即定稿**(无需再单独调 `--finalize`,也没有第二次机会 —— 再次调用只会重新定稿同一份已记录的最佳快照,不给新改动评分)。请先用你自己的脚本充分自测再提交。
+本题只允许提交一次。先用自己的脚本自测，再运行 `bash /opt/loop/submit.sh`。提交记录成功后会自动定稿，无需另调 `--finalize`。最终奖励由会话结束后的评测器给出；再次调用提交命令不会给新的改动评分。
 改动留在工作树里,不需要 `git commit`(判分读工作树,仓库 HEAD 必须停在初始基线 commit 上)。
