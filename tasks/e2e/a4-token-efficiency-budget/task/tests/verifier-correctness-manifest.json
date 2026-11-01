@@ -101,7 +101,7 @@
     "/tests/holdout_corpus.txt",
     "/tests/verifier-correctness-manifest.json"
   ],
-  "compute_reward_sha256": "acef9764228d17457e9c3e874eec62f3490a00012aae5322d3bc2893ecd61768",
+  "compute_reward_sha256": "624392cd62ac19144a41ba61401677e6331971752a92d9577693d4e64c7c73ba",
   "editable_area": "the whole /app/repo (nanoGPT -- the model, attention, and training code are all fair game) + /app/submission, minus the frozen surface.",
   "provenance": {
     "harness_lifted_from": "the sub-quadratic-LM sibling task's compute_reward.py (itself from the parameter-golf task family): the eval, anti-spoof kit, isolated-staging strip, external hard kill and cross-seed divergence gate are reused verbatim; the A6 sub-quadratic-scaling gate is REPLACED by this task's parameter cap, and the wall-clock budget is REPLACED by the token budget.",

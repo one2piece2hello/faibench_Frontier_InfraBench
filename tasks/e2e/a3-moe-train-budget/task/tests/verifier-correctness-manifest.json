@@ -84,6 +84,6 @@
     "/tests/timer.sh",
     "/tests/verifier-correctness-manifest.json"
   ],
-  "compute_reward_sha256": "a482fd5ed86af2f906017d4539d64bad39e6d117840db052621e2ecd8422a85e",
+  "compute_reward_sha256": "b4470a157811520798f02b9242b4bd2390ad81c2bc254c8539b3fd145d7247e6",
   "editable_area": "the whole /app/repo (nanoGPT) + /app/submission, minus the frozen surface"
 }

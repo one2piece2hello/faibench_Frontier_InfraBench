@@ -75,7 +75,7 @@
     ]
   },
   "frozen_surface_sha256": {
-    "compute_reward.py": "7e99747bf5f592bf215c524eae8ddd9b533af3ff54805b9923b831beb0435e55",
+    "compute_reward.py": "0305285115d843ef09ff74bb816f53806ecefea206c4bcd27cff256ee3981d16",
     "test.sh": "0bbf1e9632a5dcd23faf5e4eb08163f2b01dda8135d302ed4f12bad07e98d8b5",
     "harness/bench_prefill.py": "8e9599a74df6c15890599311a71438687d639aec20b66d528431ac8903be801a",
     "harness/baseline_prefill.py": "95c64a6f72dcf907b9a1472a49ca6071ab9a36d7ee1b571ebcf5f6f5464c3d0f",

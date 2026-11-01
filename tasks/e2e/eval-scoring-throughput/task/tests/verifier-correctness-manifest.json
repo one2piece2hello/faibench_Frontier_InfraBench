@@ -4,7 +4,7 @@
   "schema": "e2e_manifest_v1",
   "repo_baked": "EleutherAI/lm-evaluation-harness",
   "source_commit_app_repo": "97a5e2c710e2b56b9dd48f367bb6fe87bbb2c176",
-  "compute_reward_sha256": "fe8cf474296bf0491f084597f7c99a0c3658e47ddb9599be9076d57c7d4ed627",
+  "compute_reward_sha256": "d7381028ece9ae83c680d377217958892b582df02004d2fd2d0b27eec78794f8",
   "heldout_data_provenance": "Synthetic-but-realistic lm-eval scoring records generated deterministically at Docker build (build_dataset.py) from a fixed seed: each record is one eval instance carrying the harness-produced model OUTPUTS (generated text or per-choice loglikelihoods), the requested filter pipeline (regex extraction + take_first / majority_vote), the metric name (exact_match / contains / prefix_match / loglikelihood_acc), and the gold target. The agent-visible DEV split under /data is a DISJOINT sample pool with the SAME schema. The HELD-OUT split's gold + ids ship ONLY with the fresh tests/ upload at scoring (byte-identical to the authoring-time build output, sha256 pinned in thresholds.heldout_samples_sha256) and are never present in the task image at all.",
   "thresholds": {
     "score_atol": 1e-09,

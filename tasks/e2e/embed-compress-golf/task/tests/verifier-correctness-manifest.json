@@ -4,7 +4,7 @@
   "schema": "e2e_manifest_v1",
   "repo_baked": "UKPLab/sentence-transformers",
   "source_commit_app_repo": "28e79467c49b5bedff9b1492950504af04d0b74b",
-  "compute_reward_sha256": "3c8a9806bba0adf8734a55f3489e7b232d087b70e95cd2ebafcbe6f583b0cfed",
+  "compute_reward_sha256": "a5123164962c0cde9b074dc7da8d08ca43853416539a5778ee43d04bb18fa88c",
   "base_embedding_model_baked": "sentence-transformers/all-MiniLM-L6-v2 (384-dim; downloaded at Docker build via proxy, frozen under /opt/models)",
   "heldout_data_provenance": "WikiText-103（构建期经代理下载，离线切分）。语料 = 段落正文，留出查询 = 从源段落摘出的最长句，其源段落是唯一 gold（rel=1）。⚠️ 2026-07-26 反捷径修复：**每一个**段落（不只是被查询的那些）都摘掉了它最长的那句，只把剩余正文写进语料 —— 所以 gold 文档不再逐字包含 query（构建期自证 leakage=0/N，见镜像构建日志），一个「子串/精确短语匹配」打分器拿不到分；同时因为全语料一致地摘句，也没有「gold 段落系统性更短」的长度捷径。agent 可见的 dev split（/data）与留出 TEST split 段落池互斥。",
   "thresholds": {

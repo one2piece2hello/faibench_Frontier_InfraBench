@@ -160,7 +160,7 @@
     "timing": "harness-owned time.perf_counter bracketed by full torch.cuda.synchronize() on both sides of the step (side-stream work cannot escape the window); a CUDA-event pair is reported alongside as a cross-check"
   },
   "frozen_surface_sha256": {
-    "compute_reward.py": "5d543823fa6af733a9232bc6f22289bc2d21c27d211fdf65683b4ea89aa5200b",
+    "compute_reward.py": "cbf93222b9f4e76d7a574b2e43f931db4f2df82588cbee62643df2a5768a1a16",
     "test.sh": "20c5abcfdfd9fd2b2849a3d52d1458bb9fc36977ae4332eb04b82cfe1530a4f8",
     "harness/bench_kvtraffic.py": "f1b3775966170fc44c458b8daf4a992f97b187231e578c5686bc9678cfa9f357",
     "harness/baseline_kv_traffic.py": "2cd51be47369c9fb4d841c085e2ed548334f7d505dcfb5d670c59c242f89ecc0",
