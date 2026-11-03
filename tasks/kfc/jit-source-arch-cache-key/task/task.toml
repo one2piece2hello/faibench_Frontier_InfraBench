@@ -48,7 +48,7 @@ name = "buildspec_identity_recompile_count_speedup"
 goal = "maximize"
 metric_kind = "recompile_count"
 reward_formula = "acceleration: reward = measured speedup = baseline_recompiles / candidate_recompiles, where recompile_count = the number of DISTINCT identities a module's identity_key produces over a fixed labeled workload of build-specs (48 specs = 12 true equivalence classes x 4 spellings). Deterministic and hardware-portable (pure-Python stdlib, fixed FNV-1a/sha1 hash; no profiler). The frozen baseline emits one identity per spelling (~48) so its own speedup is ~1.0; a full normalizer emits one per true class (~12) -> speedup ~4.0. The 12-case hidden correctness suite, the whole-workload no-false-merge safety gate (any identity shared by two DIFFERENT true classes = correctness failure -> reward 0; two specs differing only in target profile are DIFFERENT classes), and the anti-cheat (only identity_key.py may change; no tensor/graph framework or harness import) are hard gates."
-ref_speedup = 4.0
+ref_speedup = 2.0
 ref_speedup_source = "tests/ref_speedup.txt"
 calibrated_on = "Intel Sapphire Rapids CPU lane"
 correctness_gates = [
