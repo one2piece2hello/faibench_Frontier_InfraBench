@@ -5,7 +5,9 @@ Correctness here = plan VALIDITY, checked against an INDEPENDENT model
 valid plan; it is scored on validity + its own plan's total traffic. Meta / anti-hacking
 cases confirm the checker REJECTS an illegal plan (a low-traffic tiling that exceeds the
 on-chip capacity, or one drawn from outside the allowed choices), so a tiny traffic
-bought by an invalid tiling cannot score.
+bought by an invalid tiling cannot score, and that a plan is validated and charged as
+the SAME materialised tiles, so a lazy plan object cannot be checked on one set of tiles
+and charged for another.
 
 Each case prints "CASE_PASS <name>" or "CASE_FAIL <name>: <reason>".
 """
@@ -15,6 +17,7 @@ import traceback
 
 from tile_harness import (
     footprint_of,
+    freeze_plan,
     load_candidate,
     make_bench_corpus,
     naive_plan,
@@ -43,7 +46,7 @@ def _prob(M, N, K, esz, lm, ln, lk):
 
 
 def _assert_valid(mod, problems, cap, label=""):
-    plan = mod.plan_tiling(problems, cap)
+    plan = freeze_plan(mod.plan_tiling(problems, cap))
     ok, reason = plan_is_valid(problems, cap, plan)
     if not ok:
         raise AssertionError(f"candidate plan INVALID {label}: {reason}")
@@ -195,6 +198,42 @@ def anti_hacking_min_traffic_over_cap_rejected(mod):
     if ok:
         raise AssertionError("checker FAILED to reject the over-cap minimal-traffic tiling")
     _assert_valid(mod, problems, cap, "[anti-hack]")
+
+
+@case
+def anti_hacking_plan_materialized_once(mod):
+    # meta: a plan must be validated and charged as the SAME materialised tiles. Scoring
+    # iterates the candidate's return value twice (once to check validity, once to sum
+    # the traffic), so a lazy object that yields valid tiles first and cheaper ones
+    # afterwards would be checked on one set of tiles and charged for another. Both
+    # consumers therefore have to go through tile_harness.freeze_plan.
+    problems = [_prob(256, 256, 256, 2, 128, 128, 64)]
+    cap = 24 * 1024
+    valid = reference_best_plan(problems, cap)
+    cheap = [[10 ** 9, 10 ** 9, 1]]  # far below the traffic minimum, and far over cap
+
+    class Shifting:
+        """Valid tiles on the first iteration, cheap ones afterwards."""
+
+        def __init__(self, first, later):
+            self.first, self.later, self.rounds = first, later, 0
+
+        def __len__(self):
+            return len(self.first)
+
+        def __getitem__(self, index):
+            return self.first[index]
+
+        def __iter__(self):
+            self.rounds += 1
+            return iter(self.first if self.rounds == 1 else self.later)
+
+    frozen = freeze_plan(Shifting(valid, cheap))
+    if plan_traffic(problems, frozen) != plan_traffic(problems, valid):
+        raise AssertionError("freeze_plan must keep the tiles a validity pass would see")
+    if not plan_is_valid(problems, cap, frozen)[0]:
+        raise AssertionError("materialised plan must validate on the tiles it froze")
+    _assert_valid(mod, problems, cap, "[materialised]")
 
 
 def _expect(mod, problems, cap, exc, label):

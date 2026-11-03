@@ -47,10 +47,10 @@ result_paths = [
 name = "tile_plan_dram_traffic_speedup"
 goal = "maximize"
 metric_kind = "peak_memory"
-reward_formula = "acceleration: reward = min(1.0, ln(speedup/ref_speedup)/ln(ref_speedup)) if speedup > ref_speedup else 0.0; the underlying measurement is measured speedup = baseline_traffic / candidate_traffic, where traffic = total modeled off-chip bytes moved by the tiling plan (sum over problems of esz*(M*K*(N//Tn) + K*N*(M//Tm) + 2*M*N)). The metric is a deterministic COMPUTED byte total derived from the returned plan on a fixed problem corpus (NO valgrind, NO GPU -- pure-Python stdlib). Correctness = PLAN VALIDITY: the 14-case hidden suite checks that every problem gets one [Tm,Tn,Tk] drawn from its allowed choices AND fitting the on-chip capacity ((Tm*Tk+Tk*Tn+Tm*Tn)*esz <= cap), validity derived independently; an invalid plan (small traffic that would not fit on chip) is a HARD FAIL -> reward 0. Anti-cheat (only tile_planner.py may change) and the numpy/torch/scipy/solver heavy-library ban are hard gates."
-ref_speedup = 63.46
+reward_formula = "acceleration: reward = min(1.0, ln(speedup/ref_speedup)/ln(ref_speedup)) if speedup > ref_speedup else 0.0; the underlying measurement is measured speedup = baseline_traffic / candidate_traffic, where traffic = total modeled off-chip bytes moved by the tiling plan (sum over problems of esz*(M*K*(N//Tn) + K*N*(M//Tm) + 2*M*N)). The metric is a deterministic COMPUTED byte total derived from the returned plan on a fixed problem corpus (NO valgrind, NO GPU -- pure-Python stdlib). Correctness = PLAN VALIDITY: the 15-case hidden suite checks that every problem gets one [Tm,Tn,Tk] drawn from its allowed choices AND fitting the on-chip capacity ((Tm*Tk+Tk*Tn+Tm*Tn)*esz <= cap), validity derived independently, on a plan materialised once so that validity and traffic use the same tiles; an invalid plan (small traffic that would not fit on chip) is a HARD FAIL -> reward 0. Anti-cheat (only tile_planner.py may change) and the numpy/torch/scipy/solver heavy-library ban are hard gates."
+ref_speedup = 28.773835
 ref_speedup_source = "tests/ref_speedup.txt"
-calibrated_on = "Intel Sapphire Rapids CPU lane"
+calibrated_on = "hardware-independent (deterministic computed byte total; pure Python, no timing)"
 correctness_gates = [
     "hidden_case_suite",
     "normal_valid_complete",
@@ -67,6 +67,7 @@ correctness_gates = [
     "metamorphic_traffic_scale_esz",
     "work_evidence_traffic_matches_model",
     "anti_hacking_min_traffic_over_cap_rejected",
+    "anti_hacking_plan_materialized_once",
     "candidate_plan_valid_on_corpus",
     "anti_cheat_forbidden_edit",
     "forbidden_heavy_library",

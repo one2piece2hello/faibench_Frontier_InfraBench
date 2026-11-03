@@ -34,11 +34,12 @@
 #   docker exec kfc-solve cat /logs/verifier/reward.json   # 判分结果
 #   docker rm -f kfc-solve
 #
-#   期望:oracle → 性能题得 0(它就是锚点本身; min(1, ln(speedup/ref_speedup)/ln(ref_speedup))(speedup ≤ ref_speedup 时为 0)
-#         在 speedup≈ref_speedup 处 = 0 —— 打平 oracle 不得分,必须超过。
-#         所以"oracle 跑对了"的判据不是 reward>0,而是 speedup≈ref_speedup 且
-#         hard_fail_reasons 为空;实现类二值题 = 1.0 —— 权威公式是
-#         tests/test.sh 写出的 reward_formula 字段);--negative → 0;
+#   期望(本题锚点取自 baseline2 的贪心参考 = 28.773835,不是 oracle):
+#         oracle → 穷举最优 speedup ≈ 65.047619 高于锚点 ⇒ reward > 0(约 0.24,见
+#         tests/ref_speedup.caveat.md);"参考解跑对了"的判据是 correctness 全过 +
+#         hard_fail_reasons 为空 + speedup 明显高于锚点(实现类二值题 = 1.0 —— 权威公式是
+#         tests/test.sh 写出的 reward_formula 字段);
+#         --baseline2 → ≈ 0(它就是锚点本身,打平不得分,必须超过);--negative → 0;
 #         --noop(在纯净容器里)→ 0(挖洞基线过不了正确性门)。
 #   本题带 loop16 harness:`bash /opt/loop/submit.sh` 判的也是同一棵工作树、
 #   同样走 candidate 模式(口径一致),所以落地后直接自评也成立。
