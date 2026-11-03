@@ -46,10 +46,11 @@ done < "$LOG/changed_files.txt"
 
 # ---- (2) import-origin assert: vllm under test must be the baked /app/repo tree ----
 python3 - > "$LOG/import_origin.log" 2>&1 <<'PY'
-import vllm, os, sys
-loc = os.path.dirname(vllm.__file__)
-print("VLLM_LOC", loc)
-sys.exit(0 if loc.startswith("/app/repo") else 3)
+import importlib, os, sys
+m = importlib.import_module("vllm.model_executor.layers.mamba.ops.ssd_chunk_scan")
+loc = os.path.realpath(m.__file__)
+print("SCOPE_LOC", loc)
+sys.exit(0 if loc.startswith("/app/repo/") else 3)
 PY
 [ $? -eq 0 ] || { import_origin_ok=false; add_hard "import_origin_not_app_repo"; }
 
